@@ -7,7 +7,7 @@ import com.epam.esm.exception.ExceptionMessageKey;
 import com.epam.esm.exception.IncorrectParameterValueException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.TagService;
-import com.epam.esm.validator.TagValidator;
+import com.epam.esm.validator.DataValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,14 +35,13 @@ public class TagServiceImpl implements TagService {
     @Override
     public TagDto add(TagDto tagDto) {
         Tag tag = modelMapper.map(tagDto, Tag.class);
-        TagValidator validator = new TagValidator();
-        Optional<String> errorMessage = validator.isTagDataCorrect(tag);
+        DataValidator<Tag> validator = new DataValidator<>();
+        Optional<List<String>> errorMessage = validator.isDataCorrect(tag);
 
         if (errorMessage.isPresent()) {
             throw new IncorrectParameterValueException(errorMessage.get());
         }
-        Optional<Tag> existingTag = tagDao.findByName(tag.getName());
-        Tag addedTag = existingTag.orElseGet(() -> tagDao.add(tag));
+        Tag addedTag = tagDao.add(tag);
         return modelMapper.map(addedTag, TagDto.class);
     }
 

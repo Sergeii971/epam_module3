@@ -13,7 +13,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-class GiftCertificateValidatorTest {
+class DataValidatorTest {
     @Test
     public void isGiftCertificateDataCorrectPositiveTest() {
         long certificateId = 1;
@@ -26,8 +26,8 @@ class GiftCertificateValidatorTest {
         List<Tag> tags = new ArrayList<>();
         GiftCertificate giftCertificate = new GiftCertificate(certificateId, name, description, price, duration, createDate,
                 lastUpdateDate, true, tags);
-        GiftCertificateValidator validator = new GiftCertificateValidator();
-        Optional<List<String>> actual = validator.isGiftCertificateDataCorrect(giftCertificate);
+        DataValidator validator = new DataValidator();
+        Optional<List<String>> actual = validator.isDataCorrect(giftCertificate);
         Optional<List<String>> expected = Optional.empty();
         assertEquals(actual, expected);
     }
@@ -44,8 +44,8 @@ class GiftCertificateValidatorTest {
         List<Tag> tags = new ArrayList<>();
         GiftCertificate giftCertificate = new GiftCertificate(certificateId, name, description, price, duration, createDate,
                 lastUpdateDate, true, tags);
-        GiftCertificateValidator validator = new GiftCertificateValidator();
-        Optional<List<String>> actual = validator.isGiftCertificateDataCorrect(giftCertificate);
+        DataValidator validator = new DataValidator();
+        Optional<List<String>> actual = validator.isDataCorrect(giftCertificate);
         Optional<List<String>> expected = Optional.empty();
         assertNotEquals(actual, expected);
     }

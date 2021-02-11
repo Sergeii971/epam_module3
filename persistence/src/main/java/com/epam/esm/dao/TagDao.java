@@ -34,18 +34,9 @@ public interface TagDao {
     Optional<Tag> findById(long tagId);
 
     /**
-     * Remove gift certificate has tag
-     *
-     * @param id the tag id
-     */
-    void removeGiftCertificateHasTag(long id);
-
-    /**
      * Find all tags by gift certificate id.
      *
      * @return the list of found tags
      */
     List<Tag> findByGiftCertificateId(long certificateId);
-
-    Optional<Tag> findByName(String name);
 }

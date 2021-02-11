@@ -18,13 +18,14 @@ public class DatabaseQuery {
 
     public static final String ADD_TAG = "INSERT INTO tag(name) VALUES (?)";
     public static final String FIND_ALL_TAGS = "SELECT tagId, name FROM tag";
-    public static final String FIND_TAG_BY_ID = FIND_ALL_TAGS + " WHERE tagId = ?";
     public static final String FIND_BY_GIFT_CERTIFICATE_ID = FIND_ALL_TAGS +
             " INNER JOIN gift_certificate_has_tag ON tag.tagId = gift_certificate_has_tag.tag_tagId WHERE "
             + "gift_certificate_has_tag.gift_certificate_giftId = ?";
     public static final String FIND_BY_NAME = "SELECT tagId, name FROM tag WHERE name = ?";
     public static final String TAG_REMOVE_GIFT_CERTIFICATE_HAS_TAG = "DELETE FROM gift_certificate_has_tag "
             + "WHERE tag_tagId = ?";
+
+    public static final String FIND_ALL_USERS = "SELECT login, name, surname, isAdmin FROM user";
 
     private DatabaseQuery() {
     }

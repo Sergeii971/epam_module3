@@ -84,6 +84,10 @@ public class TagDto implements BaseDto {
 
     @Override
     public String toString() {
-        return new StringBuilder().append(tagId).append(" ").append(name).toString();
+        return new StringBuilder()
+                .append(tagId)
+                .append(" ")
+                .append(name)
+                .toString();
     }
 }

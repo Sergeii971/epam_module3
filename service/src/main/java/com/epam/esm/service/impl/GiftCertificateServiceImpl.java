@@ -11,7 +11,7 @@ import com.epam.esm.exception.IncorrectParameterValueException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
-import com.epam.esm.validator.GiftCertificateValidator;
+import com.epam.esm.validator.DataValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,8 +48,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public void add(GiftCertificateDto giftCertificateDto) {
         addAndSetTags(giftCertificateDto);
         GiftCertificate giftCertificate = modelMapper.map(giftCertificateDto, GiftCertificate.class);
-        GiftCertificateValidator validator = new GiftCertificateValidator();
-        Optional<List<String>> errorMessage = validator.isGiftCertificateDataCorrect(giftCertificate);
+        DataValidator<GiftCertificate> validator = new DataValidator<>();
+        Optional<List<String>> errorMessage = validator.isDataCorrect(giftCertificate);
 
         if (errorMessage.isPresent()) {
             throw new IncorrectParameterValueException(errorMessage.get());
@@ -70,8 +70,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new ResourceNotFoundException(ExceptionMessageKey.GIFT_CERTIFICATE_NOT_FOUND_BY_ID);
         }
         updateGiftCertificateFields(foundGiftCertificate.get(), modifiedGiftCertificate);
-        GiftCertificateValidator validator = new GiftCertificateValidator();
-        Optional<List<String>> errorMessage = validator.isGiftCertificateDataCorrect(modifiedGiftCertificate);
+        DataValidator<GiftCertificate> validator = new DataValidator<>();
+        Optional<List<String>> errorMessage = validator.isDataCorrect(modifiedGiftCertificate);
 
         if (errorMessage.isPresent()) {
             throw new IncorrectParameterValueException(errorMessage.get());

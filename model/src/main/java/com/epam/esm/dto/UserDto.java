@@ -1,36 +1,23 @@
-package com.epam.esm.entity;
+package com.epam.esm.dto;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
-@Entity
-@Table(name = "user")
-public class User implements BaseEntity {
-    @Id
-    @Column(name = "login")
-    @NotNull(message = "javax.validation.constraints.NotNull.message.login")
-    @Size(min = 1, max = 45, message = "javax.validation.constraints.Size.message.login")
+public class UserDto implements BaseDto {
+    @JsonProperty("login")
     private String login;
-    @Column(name = "name")
-    @NotNull(message = "javax.validation.constraints.NotNull.message.name")
-    @Size(min = 1, max = 45, message = "javax.validation.constraints.Size.message.name")
+    @JsonProperty("name")
     private String name;
-    @Column(name = "surname")
-    @NotNull(message = "javax.validation.constraints.NotNull.message.surname")
-    @Size(min = 1, max = 45, message = "javax.validation.constraints.Size.message.surname")
+    @JsonProperty("surname")
     private String surname;
-    @Column(name = "isAdmin")
+    @JsonProperty("isAdmin")
     private boolean isAdmin;
 
-    public User() {
+    public UserDto() {
     }
 
-    public User(String login, String name, String surname, boolean isAdmin) {
+    public UserDto(String login, String name, String surname, boolean isAdmin) {
         this.login = login;
         this.name = name;
         this.surname = surname;
@@ -77,7 +64,7 @@ public class User implements BaseEntity {
         if (o ==null || this.getClass() != o.getClass()) {
             return false;
         }
-        User user = (User) o;
+        UserDto user = (UserDto) o;
 
         return (Objects.equals(name, user.name) && Objects.equals(surname, user.surname)
                 && Objects.equals(login, user.login) && isAdmin == user.isAdmin);

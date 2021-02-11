@@ -17,27 +17,28 @@ import java.util.Set;
  * @author Verbovskiy Sergei
  * @version 1.0
  */
-public class GiftCertificateValidator {
+public class DataValidator<T> {
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = factory.getValidator();
 
     /**
      * Validate gift certificate data.
      *
-     * @param certificate the gift certificate
+     * @param t the t
      * @return the error message
      */
-    public Optional<List<String>> isGiftCertificateDataCorrect(GiftCertificate certificate) {
+    public Optional<List<String>> isDataCorrect(T t) {
         Optional<List<String>> errorMessagesOptionalFormat = Optional.empty();
         List<String> errorMessages = new ArrayList<>();
-        Set<ConstraintViolation<GiftCertificate>> violations = validator.validate(certificate);
+        Set<ConstraintViolation<T>> violations = validator.validate(t);
 
-        for (ConstraintViolation<GiftCertificate> violation : violations) {
+        for (ConstraintViolation<T> violation : violations) {
             errorMessages.add(violation.getMessage());
         }
         if (errorMessages.size() != 0) {
             errorMessagesOptionalFormat = Optional.of(errorMessages);
         }
         return errorMessagesOptionalFormat;
+
     }
 }
