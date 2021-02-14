@@ -1,23 +1,31 @@
 package com.epam.esm.dto;
 
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.User;
+import com.epam.esm.converter.LocalDateTimeDeserializer;
+import com.epam.esm.converter.LocalDateTimeSerializer;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class UserOrderDto implements BaseDto {
+    @JsonProperty("orderId")
     private long orderId;
+    @JsonProperty("date")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime date;
-    private final User user;
-    private final GiftCertificate giftCertificate;
+    @JsonProperty("user")
+    private UserDto user;
+    @JsonProperty("giftCertificate")
+    private GiftCertificateDto giftCertificate;
 
     public UserOrderDto() {
-        user = new User();
-        giftCertificate = new GiftCertificate();
     }
 
-    public UserOrderDto(long orderId, LocalDateTime date, User user, GiftCertificate giftCertificate) {
+    public UserOrderDto(long orderId, LocalDateTime date, UserDto user, GiftCertificateDto giftCertificate) {
         this.orderId = orderId;
         this.date = date;
         this.user = user;
@@ -40,12 +48,20 @@ public class UserOrderDto implements BaseDto {
         this.date = date;
     }
 
-    public User getUser() {
+    public UserDto getUser() {
         return user;
     }
 
-    public GiftCertificate getGiftCertificate() {
+    public GiftCertificateDto getGiftCertificate() {
         return giftCertificate;
+    }
+
+    public void setUser(UserDto user) {
+        this.user = user;
+    }
+
+    public void setGiftCertificate(GiftCertificateDto giftCertificate) {
+        this.giftCertificate = giftCertificate;
     }
 
     @Override

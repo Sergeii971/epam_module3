@@ -3,6 +3,7 @@ package com.epam.esm.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -14,34 +15,30 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 /**
- * The type ApplicationDevConfig.
+ * The type PersistenceJPAConfig.
  *
  * @author Verbovskiy Sergei
  * @version 1.0
  */
 @Configuration
 @EnableTransactionManagement
-@PropertySource({"classpath:config/databaseDev.properties", "classpath:config/databaseProd.properties"})
 public class PersistenceJPAConfig {
-    @Value("${database.driverClassName}")
-    private String driverClassName;
-    @Value("${database.url}")
-    private String url;
-    @Value("${database.username}")
-    private String username;
-    @Value("${database.password}")
-    private String password;
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
 
     @Bean
-    public DataSource dataSource(){
+    public DataSource dataSource() {
+        ResourceBundle rb = ResourceBundle.getBundle("config.database", new Locale(activeProfile));
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(driverClassName);
-        dataSource.setUrl(url);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
+        dataSource.setDriverClassName(rb.getString("database.driverClassName"));
+        dataSource.setUrl(rb.getString("database.url"));
+        dataSource.setUsername(rb.getString("database.username"));
+        dataSource.setPassword(rb.getString("database.password"));
         return dataSource;
     }
 
@@ -73,7 +70,7 @@ public class PersistenceJPAConfig {
     Properties additionalProperties() {
         Properties properties = new Properties();
         properties.setProperty("hibernate.hbm2ddl.auto", "update");
-        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLInnoDBDialect");
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
 
         return properties;
     }

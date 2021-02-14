@@ -24,7 +24,7 @@ public interface TagService {
      *
      * @return the list of found tags
      */
-    List<TagDto> findAll();
+    List<TagDto> findAll(int pageNumber, int size);
 
     /**
      * Find tag by id.
@@ -32,11 +32,4 @@ public interface TagService {
      * @return TagDto
      */
     TagDto findTagById(long tagId);
-
-    /**
-     * Find all tags by gift certificate id.
-     *
-     * @return the list of found tags
-     */
-    List<TagDto> findTagsByGiftCertificateId(long giftCertificateId);
 }

@@ -2,28 +2,40 @@ package com.epam.esm.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "order")
+@Table(name = "`order`")
 public class UserOrder implements BaseEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "orderId")
     private long orderId;
     @Column(name = "date")
     private LocalDateTime date;
-    @Transient
-    private final User user;
-    @Transient
-    private final GiftCertificate giftCertificate;
+    @ManyToOne
+    @JoinColumn(name = "user_login", nullable=false)
+    private User user;
+    @ManyToOne
+    @JoinColumn(name = "gift_certificate_certificateId", nullable=false)
+    private GiftCertificate giftCertificate;
 
     public UserOrder() {
-        user = new User();
-        giftCertificate = new GiftCertificate();
+
+    }
+
+    public UserOrder(LocalDateTime date, User user, GiftCertificate giftCertificate) {
+        this.date = date;
+        this.user = user;
+        this.giftCertificate = giftCertificate;
     }
 
     public UserOrder(long orderId, LocalDateTime date, User user, GiftCertificate giftCertificate) {

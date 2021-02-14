@@ -10,5 +10,5 @@ public interface UserDao {
 
     Optional<User> findByLogin(String login);
 
-    List<User> findAll();
+    List<User> findAll(int pageNumber, int size);
 }

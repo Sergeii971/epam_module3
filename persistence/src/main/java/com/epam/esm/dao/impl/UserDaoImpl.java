@@ -2,8 +2,6 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dao.query.DatabaseQuery;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -36,8 +34,10 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> findAll() {
-        Query query = entityManager.createNativeQuery(DatabaseQuery.FIND_ALL_USERS, User.class);
+    public List<User> findAll(int pageNumber, int size) {
+        Query query = entityManager.createQuery(DatabaseQuery.FIND_ALL_USERS, User.class);
+        query.setFirstResult((pageNumber - 1) * size);
+        query.setMaxResults(size);
         return query.getResultList();
     }
 }

@@ -13,19 +13,29 @@ public class DatabaseQuery {
             "gift_certificate.name LIKE concat(?, '%') AND description LIKE concat(?, '%') GROUP BY certificateId ";
     public static final String FIND_BY_TAG_NAME = "SELECT certificateId, gift_certificate.name, "
             + "description, price, duration, createDate, lastUpdateDate, isBought FROM gift_certificate "
-            + "INNER JOIN gift_certificate_has_tag ON gift_certificate.certificateId = gift_certificate_giftId "
+            + "INNER JOIN gift_certificate_has_tag ON gift_certificate.certificateId = gift_certificate_has_tag.gift_certificate_certificateId "
             + "INNER JOIN tag ON gift_certificate_has_tag.tag_tagId = tagId WHERE tag.name LIKE concat(?, '%')";
+    public static final String FIND_BY_TAG_NAMES = "SELECT certificateId, gift_certificate.name, "
+            + "description, price, duration, createDate, lastUpdateDate, isBought " +
+            " FROM gift_certificate INNER JOIN gift_certificate_has_tag ON gift_certificate.certificateId" +
+            " = gift_certificate_certificateId INNER JOIN tag ON gift_certificate_has_tag.tag_tagId = tagId " +
+            "GROUP BY gift_certificate.certificateId HAVING ";
 
-    public static final String ADD_TAG = "INSERT INTO tag(name) VALUES (?)";
-    public static final String FIND_ALL_TAGS = "SELECT tagId, name FROM tag";
-    public static final String FIND_BY_GIFT_CERTIFICATE_ID = FIND_ALL_TAGS +
-            " INNER JOIN gift_certificate_has_tag ON tag.tagId = gift_certificate_has_tag.tag_tagId WHERE "
-            + "gift_certificate_has_tag.gift_certificate_giftId = ?";
-    public static final String FIND_BY_NAME = "SELECT tagId, name FROM tag WHERE name = ?";
-    public static final String TAG_REMOVE_GIFT_CERTIFICATE_HAS_TAG = "DELETE FROM gift_certificate_has_tag "
-            + "WHERE tag_tagId = ?";
 
-    public static final String FIND_ALL_USERS = "SELECT login, name, surname, isAdmin FROM user";
+    public static final String FIND_ALL_TAGS = "SELECT t FROM Tag t";
+    public static final String FIND_MOST_POPULAR_AND_HIGH_COST = "SELECT tag.tagId, tag.name FROM gift_certificate " +
+            "INNER JOIN gift_certificate_has_tag ON gift_certificate.certificateId = gift_certificate_has_tag.gift_certificate_certificateId " +
+            "INNER JOIN tag ON gift_certificate_has_tag.tag_tagId = tagId WHERE isBought = true " +
+            "GROUP BY tag.name HAVING COUNT(tag.name) >= (SELECT COUNT(tag.name) FROM gift_certificate INNER JOIN " +
+            "gift_certificate_has_tag ON gift_certificate.certificateId = gift_certificate_has_tag.gift_certificate_certificateId " +
+            "INNER JOIN tag ON gift_certificate_has_tag.tag_tagId = tagId GROUP BY tag.name ORDER BY COUNT(*) DESC LIMIT 1) " +
+            "AND SUM(gift_certificate.price) >= (SELECT SUM(gift_certificate.price) FROM gift_certificate INNER JOIN " +
+            "gift_certificate_has_tag ON gift_certificate.certificateId = gift_certificate_has_tag.gift_certificate_certificateId " +
+            "INNER JOIN tag ON gift_certificate_has_tag.tag_tagId = tagId GROUP BY tag.name ORDER BY SUM(gift_certificate.price) DESC LIMIT 1) LIMIT 1";
+
+    public static final String FIND_ALL_USERS = "SELECT t FROM User t";
+
+    public static final String FIND_ALL_USER_ORDERS = "SELECT t FROM UserOrder t WHERE t.user.login = :login";
 
     private DatabaseQuery() {
     }

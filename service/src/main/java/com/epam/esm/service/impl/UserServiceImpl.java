@@ -5,7 +5,8 @@ import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.ExceptionMessageKey;
 import com.epam.esm.exception.IncorrectParameterValueException;
-import com.epam.esm.exception.LoginAlreadyExistException;
+import com.epam.esm.exception.PaginationException;
+import com.epam.esm.exception.UserException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.UserService;
 import com.epam.esm.validator.DataValidator;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,12 +45,15 @@ public class UserServiceImpl implements UserService {
             user.setAdmin(false);
             userDao.add(user);
         } else {
-            throw new LoginAlreadyExistException(ExceptionMessageKey.LOGIN_ALREADY_EXIST);
+            throw new UserException(ExceptionMessageKey.LOGIN_ALREADY_EXIST);
         }
     }
 
     @Override
     public UserDto findUserByLogin(String login) {
+        if (Objects.isNull(login)) {
+            throw new IncorrectParameterValueException();
+        }
         Optional<User> foundUser = userDao.findByLogin(login);
         return foundUser
                 .map(user -> modelMapper.map(user, UserDto.class))
@@ -56,8 +61,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> findAll() {
-        List<User> users = userDao.findAll();
+    public List<UserDto> findAll(int pageNumber, int size) {
+        if (pageNumber <= 0 || size <= 0) {
+            throw new PaginationException(ExceptionMessageKey.INCORRECT_PAGINATION_DATA);
+        }
+        List<User> users = userDao.findAll(pageNumber, size);
         return users
                 .stream()
                 .map(user -> modelMapper.map(user, UserDto.class))

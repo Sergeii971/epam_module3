@@ -55,7 +55,7 @@ class GiftCertificateServiceImplTest {
                 lastUpdateDate, true, tags);
         Mockito.doReturn(Optional.of(giftCertificate)).when(dao).findById(1);
         GiftCertificateDto expected = new GiftCertificateDto(certificateId, name, description, price, duration,
-                createDate, lastUpdateDate, new ArrayList<>());
+                createDate, lastUpdateDate, true,  new ArrayList<>());
         assertEquals(giftCertificateService.findGiftCertificateById(1), expected);
     }
 
@@ -73,7 +73,7 @@ class GiftCertificateServiceImplTest {
                 lastUpdateDate, true, tags);
         Mockito.doReturn(Optional.of(giftCertificate)).when(dao).findById(1);
         GiftCertificateDto expected = new GiftCertificateDto(certificateId, name, description, price, duration,
-                createDate, lastUpdateDate, null);
+                createDate, lastUpdateDate, true, null);
         assertNotEquals(giftCertificateService.findGiftCertificateById(1), expected);
     }
 

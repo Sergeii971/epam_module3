@@ -2,13 +2,14 @@ package com.epam.esm.handler;
 
 import com.epam.esm.dto.ErrorDto;
 import com.epam.esm.exception.IncorrectParameterValueException;
-import com.epam.esm.exception.LoginAlreadyExistException;
+import com.epam.esm.exception.OrderException;
+import com.epam.esm.exception.PaginationException;
 import com.epam.esm.exception.ResourceNotFoundException;
+import com.epam.esm.exception.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -47,9 +48,23 @@ public class ExceptionProcessor extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorDto(exceptionMessage, INCORRECT_PARAMETER_VALUE_CODE), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = LoginAlreadyExistException.class)
-    public ResponseEntity<ErrorDto> handleLoginAlreadyExistException(LoginAlreadyExistException exception,
+    @ExceptionHandler(value = UserException.class)
+    public ResponseEntity<ErrorDto> handleUserException(UserException exception,
                                                                      Locale locale) {
+        String exceptionMessage = exceptionMessageCreator.createMessage(exception.getMessage(), locale);
+        return new ResponseEntity<>(new ErrorDto(exceptionMessage, INCORRECT_PARAMETER_VALUE_CODE), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = OrderException.class)
+    public ResponseEntity<ErrorDto> handleOrderException(OrderException exception,
+                                                                     Locale locale) {
+        String exceptionMessage = exceptionMessageCreator.createMessage(exception.getMessage(), locale);
+        return new ResponseEntity<>(new ErrorDto(exceptionMessage, INCORRECT_PARAMETER_VALUE_CODE), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = PaginationException.class)
+    public ResponseEntity<ErrorDto> handlePaginationException(PaginationException exception,
+                                                              Locale locale) {
         String exceptionMessage = exceptionMessageCreator.createMessage(exception.getMessage(), locale);
         return new ResponseEntity<>(new ErrorDto(exceptionMessage, INCORRECT_PARAMETER_VALUE_CODE), HttpStatus.BAD_REQUEST);
     }

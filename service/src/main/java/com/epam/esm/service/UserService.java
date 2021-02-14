@@ -6,10 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface UserService {
-    @Transactional
     void add(UserDto userDto);
 
     UserDto findUserByLogin(String login);
 
-    List<UserDto> findAll();
+    List<UserDto> findAll(int pageNumber, int size);
 }

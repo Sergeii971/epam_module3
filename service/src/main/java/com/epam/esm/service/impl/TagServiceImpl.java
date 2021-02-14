@@ -5,12 +5,14 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.ExceptionMessageKey;
 import com.epam.esm.exception.IncorrectParameterValueException;
+import com.epam.esm.exception.PaginationException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validator.DataValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +35,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public TagDto add(TagDto tagDto) {
         Tag tag = modelMapper.map(tagDto, Tag.class);
         DataValidator<Tag> validator = new DataValidator<>();
@@ -46,8 +49,11 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<TagDto> findAll() {
-        List<Tag> tags = tagDao.findAll();
+    public List<TagDto> findAll(int pageNumber, int size) {
+        if (pageNumber <= 0 || size <= 0) {
+            throw new PaginationException(ExceptionMessageKey.INCORRECT_PAGINATION_DATA);
+        }
+        List<Tag> tags = tagDao.findAll(pageNumber, size);
         return tags
                 .stream()
                 .map(tag -> modelMapper.map(tag, TagDto.class))
@@ -59,14 +65,5 @@ public class TagServiceImpl implements TagService {
         Optional<Tag> foundTag = tagDao.findById(tagId);
         return foundTag.map(tag -> modelMapper.map(tag, TagDto.class))
                 .orElseThrow(() -> new ResourceNotFoundException(ExceptionMessageKey.TAG_NOT_FOUND_BY_ID));
-    }
-
-    @Override
-    public List<TagDto> findTagsByGiftCertificateId(long giftCertificateId) {
-        List<Tag> foundTags = tagDao.findByGiftCertificateId(giftCertificateId);
-        return foundTags
-                .stream()
-                .map(foundTag -> modelMapper.map(foundTag, TagDto.class))
-                .collect(Collectors.toList());
     }
 }

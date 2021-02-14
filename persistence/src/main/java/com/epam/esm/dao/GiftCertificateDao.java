@@ -33,7 +33,7 @@ public interface GiftCertificateDao {
      * @param giftCertificateQueryParameters the gift certificate query parameter
      * @return the list of found gift certificate
      */
-    List<GiftCertificate> findByQueryParameters(GiftCertificateQueryParameters giftCertificateQueryParameters);
+    List<GiftCertificate> findByQueryParameters(GiftCertificateQueryParameters giftCertificateQueryParameters, int pageNumber, int size);
 
     /**
      * update gift certificate
@@ -48,4 +48,6 @@ public interface GiftCertificateDao {
      * @return the list of found gift certificate
      */
     List<GiftCertificate> findByTagName(GiftCertificateQueryParameters parameters);
+
+    Optional<List<GiftCertificate>> findByTags(List<String> tagNames);
 }

@@ -8,6 +8,8 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.GiftCertificateQueryParameters;
 import com.epam.esm.exception.ExceptionMessageKey;
 import com.epam.esm.exception.IncorrectParameterValueException;
+import com.epam.esm.exception.OrderException;
+import com.epam.esm.exception.PaginationException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
@@ -69,6 +71,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (!foundGiftCertificate.isPresent()) {
             throw new ResourceNotFoundException(ExceptionMessageKey.GIFT_CERTIFICATE_NOT_FOUND_BY_ID);
         }
+        if (foundGiftCertificate.get().isBought()) {
+            throw new OrderException(ExceptionMessageKey.CERTIFICATE_ALREADY_BOUGHT);
+        }
         updateGiftCertificateFields(foundGiftCertificate.get(), modifiedGiftCertificate);
         DataValidator<GiftCertificate> validator = new DataValidator<>();
         Optional<List<String>> errorMessage = validator.isDataCorrect(modifiedGiftCertificate);
@@ -90,16 +95,19 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public List<GiftCertificateDto> findGiftCertificatesByParameters(
-            GiftCertificateQueryParametersDto giftCertificateQueryParametersDto) {
-        GiftCertificateQueryParameters giftCertificateQueryParameters
-                = modelMapper.map(giftCertificateQueryParametersDto, GiftCertificateQueryParameters.class);
+            GiftCertificateQueryParametersDto giftCertificateQueryParametersDto, int pageNumber, int size) {
+        if (pageNumber <= 0 || size <= 0) {
+            throw new PaginationException(ExceptionMessageKey.INCORRECT_PAGINATION_DATA);
+        }
+        GiftCertificateQueryParameters giftCertificateQueryParameters = modelMapper
+                .map(giftCertificateQueryParametersDto, GiftCertificateQueryParameters.class);
         List<GiftCertificate> foundGiftCertificates;
         if (isQueryFindByTagName(giftCertificateQueryParameters)) {
             prepareParametersForRequest(giftCertificateQueryParameters);
             foundGiftCertificates = giftCertificateDao.findByTagName(giftCertificateQueryParameters);
         } else {
             prepareParametersForRequest(giftCertificateQueryParameters);
-            foundGiftCertificates = giftCertificateDao.findByQueryParameters(giftCertificateQueryParameters);
+            foundGiftCertificates = giftCertificateDao.findByQueryParameters(giftCertificateQueryParameters, pageNumber,size);
         }
         return foundGiftCertificates
                 .stream()
@@ -107,9 +115,20 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<GiftCertificateDto> findByTags(List<String> tagNames) {
+        Optional<List<GiftCertificate>> giftCertificates = giftCertificateDao.findByTags(tagNames);
+        if (!giftCertificates.isPresent()) {
+            throw new ResourceNotFoundException(ExceptionMessageKey.GIFT_CERTIFICATE_NOT_FOUND);
+        }
+        return giftCertificates.get()
+                .stream()
+                .map(this::convertGiftCertificateAndSetTags)
+                .collect(Collectors.toList());
+    }
+
     private GiftCertificateDto convertGiftCertificateAndSetTags(GiftCertificate giftCertificate) {
         GiftCertificateDto giftCertificateDto = modelMapper.map(giftCertificate, GiftCertificateDto.class);
-        giftCertificateDto.setTags(tagService.findTagsByGiftCertificateId(giftCertificateDto.getCertificateId()));
         return giftCertificateDto;
     }
 

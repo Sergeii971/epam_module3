@@ -4,9 +4,11 @@ import com.epam.esm.converter.ToOrderTypeConverter;
 import com.epam.esm.converter.ToSortTypeConverter;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.GiftCertificateQueryParametersDto;
+import com.epam.esm.hateoas.GiftCertificateHateoas;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.ws.rs.QueryParam;
 import java.util.List;
 
 /**
@@ -48,7 +51,7 @@ public class GiftCertificateController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void addGiftCertificate(@RequestBody @Valid GiftCertificateDto giftCertificateDto) {
+    public void addGiftCertificate(@RequestBody GiftCertificateDto giftCertificateDto) {
         service.add(giftCertificateDto);
     }
 
@@ -92,8 +95,11 @@ public class GiftCertificateController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public List<GiftCertificateDto> findGiftCertificatesByParameters(@RequestParam(value = "tagName",
-            required = false) String tagName, @RequestParam(value = "name", required = false) String name,
+    public CollectionModel<GiftCertificateDto> findGiftCertificatesByParameters(@RequestParam("pageNumber") int pageNumber,
+                                                                     @RequestParam("size") int size,
+                                                                     @RequestParam(value = "tagName", required = false)
+                                                                                 String tagName,
+                                                                     @RequestParam(value = "name", required = false) String name,
                                                                      @RequestParam(value = "description",
                                                                              required = false) String description,
                                                                      @RequestParam(value = "sortType", required = false)
@@ -106,6 +112,16 @@ public class GiftCertificateController {
         GiftCertificateQueryParametersDto.SortType sortType1 = toSortTypeConverter.convertToSortType(sortType);
         GiftCertificateQueryParametersDto giftCertificateQueryParametersDto = new GiftCertificateQueryParametersDto(
                 tagName, name, description, sortType1, orderType1);
-        return service.findGiftCertificatesByParameters(giftCertificateQueryParametersDto);
+        List<GiftCertificateDto> certificates = service.findGiftCertificatesByParameters(giftCertificateQueryParametersDto, pageNumber, size);
+        GiftCertificateHateoas giftCertificateHateoas = applicationContext.getBean(GiftCertificateHateoas.class);
+        return giftCertificateHateoas.addLinksForUpdateGiftCertificate(certificates);
+    }
+
+    @RequestMapping(value = "/tags", method = RequestMethod.GET,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public List<GiftCertificateDto> findByTags(@RequestParam(value = "tagNames") List<String> tagNames) {
+        return service.findByTags(tagNames);
     }
 }

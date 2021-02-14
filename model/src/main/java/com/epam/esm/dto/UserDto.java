@@ -1,10 +1,11 @@
 package com.epam.esm.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Objects;
 
-public class UserDto implements BaseDto {
+public class UserDto extends RepresentationModel<UserDto> implements BaseDto {
     @JsonProperty("login")
     private String login;
     @JsonProperty("name")

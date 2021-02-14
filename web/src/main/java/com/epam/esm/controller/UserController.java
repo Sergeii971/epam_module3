@@ -1,29 +1,34 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.service.TagService;
+import com.epam.esm.hateoas.UserHateoas;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.ws.rs.QueryParam;
 import java.util.List;
 
 @RestController
 @RequestMapping("/v1/users")
 public class UserController {
     private final UserService userService;
+    private final ApplicationContext applicationContext;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ApplicationContext applicationContext) {
         this.userService = userService;
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -35,7 +40,7 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void addTag(@RequestBody UserDto userDto) {
+    public void addUser(@RequestBody UserDto userDto) {
         userService.add(userDto);
     }
 
@@ -48,8 +53,11 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDto> findAllUsers() {
-        return userService.findAll();
+    public CollectionModel<UserDto> findAllUsers(@RequestParam("pageNumber") int pageNumber,
+                                                 @RequestParam("size") int size) {
+        List<UserDto> users = userService.findAll(pageNumber, size);
+        UserHateoas userHateoas = applicationContext.getBean(UserHateoas.class);
+        return userHateoas.addLinksForFindAllUsers(users);
     }
 
     /**

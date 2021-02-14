@@ -24,7 +24,7 @@ public interface TagDao {
      *
      * @return the list of found tags
      */
-    List<Tag> findAll();
+    List<Tag> findAll(int pageNumber, int size);
 
     /**
      * Find tag by id.
@@ -32,11 +32,4 @@ public interface TagDao {
      * @return the found tag
      */
     Optional<Tag> findById(long tagId);
-
-    /**
-     * Find all tags by gift certificate id.
-     *
-     * @return the list of found tags
-     */
-    List<Tag> findByGiftCertificateId(long certificateId);
 }

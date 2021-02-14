@@ -1,5 +1,6 @@
 package com.epam.esm.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,7 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -56,9 +59,11 @@ public class GiftCertificate implements BaseEntity {
     @Column(name = "isBought")
     private boolean isBought;
     @ManyToMany
-    @JoinTable(name = "gift_certificate_has_tag", joinColumns = @JoinColumn(name = "gift_certificate_giftId"),
+    @JoinTable(name = "gift_certificate_has_tag", joinColumns = @JoinColumn(name = "gift_certificate_certificateId"),
             inverseJoinColumns = @JoinColumn(name = "tag_tagId"))
     private List<Tag> tags;
+    @OneToMany(mappedBy = "giftCertificate", cascade = CascadeType.ALL)
+    private List<UserOrder> orders = new ArrayList<>();
 
     public GiftCertificate(long certificateId, String name, String description, BigDecimal price, int duration,
                            LocalDateTime createDate, LocalDateTime lastUpdateDate, boolean isBought) {
@@ -84,6 +89,21 @@ public class GiftCertificate implements BaseEntity {
         this.lastUpdateDate = lastUpdateDate;
         this.isBought = isBought;
         this.tags = tags;
+    }
+
+    public GiftCertificate(long certificateId, String name, String description, BigDecimal price, int duration,
+                           LocalDateTime createDate, LocalDateTime lastUpdateDate,boolean isBought, List<Tag> tags,
+                           List<UserOrder> orders) {
+        this.certificateId = certificateId;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.createDate = createDate;
+        this.lastUpdateDate = lastUpdateDate;
+        this.isBought = isBought;
+        this.tags = tags;
+        this.orders = orders;
     }
 
     public GiftCertificate() {
@@ -240,6 +260,14 @@ public class GiftCertificate implements BaseEntity {
      */
     public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    public List<UserOrder> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<UserOrder> orders) {
+        this.orders = orders;
     }
 
     @Override

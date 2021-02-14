@@ -1,11 +1,16 @@
 package com.epam.esm.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -26,6 +31,8 @@ public class User implements BaseEntity {
     private String surname;
     @Column(name = "isAdmin")
     private boolean isAdmin;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserOrder> orders = new ArrayList<>();
 
     public User() {
     }
@@ -35,6 +42,14 @@ public class User implements BaseEntity {
         this.name = name;
         this.surname = surname;
         this.isAdmin = isAdmin;
+    }
+
+    public User(String login,String name, String surname, boolean isAdmin, List<UserOrder> orders) {
+        this.login = login;
+        this.name = name;
+        this.surname = surname;
+        this.isAdmin = isAdmin;
+        this.orders = orders;
     }
 
     public String getLogin() {
@@ -67,6 +82,14 @@ public class User implements BaseEntity {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public List<UserOrder> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<UserOrder> orders) {
+        this.orders = orders;
     }
 
     @Override

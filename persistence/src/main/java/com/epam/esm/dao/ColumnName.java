@@ -18,6 +18,8 @@ public class ColumnName {
     public final static String TAG_ID = "tagId";
     public final static String TAG_NAME = "name";
 
+    public static final String LOGIN = "login";
+
     private ColumnName() {
 
     }

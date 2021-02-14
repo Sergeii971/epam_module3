@@ -3,10 +3,13 @@ package com.epam.esm.dto;
 import com.epam.esm.converter.LocalDateTimeSerializer;
 import com.epam.esm.converter.LocalDateTimeDeserializer;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Tag;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.springframework.hateoas.RepresentationModel;
 
+import javax.persistence.Column;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,7 +22,7 @@ import java.util.Objects;
  * @author Verbovskiy Sergei
  * @version 1.0
  */
-public class GiftCertificateDto implements BaseDto {
+public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> implements BaseDto {
     @JsonProperty("certificateId")
     private long certificateId;
     @JsonProperty("name")
@@ -38,6 +41,8 @@ public class GiftCertificateDto implements BaseDto {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime lastUpdateDate;
+    @JsonProperty("isBought")
+    private boolean isBought;
     @JsonProperty("tags")
     private List<TagDto> tags;
 
@@ -46,7 +51,7 @@ public class GiftCertificateDto implements BaseDto {
     }
 
     public GiftCertificateDto(long certificateId, String name, String description, BigDecimal price, int duration,
-                              LocalDateTime createDate, LocalDateTime lastUpdateDate) {
+                           LocalDateTime createDate, LocalDateTime lastUpdateDate, boolean isBought) {
         this.certificateId = certificateId;
         this.name = name;
         this.description = description;
@@ -54,11 +59,12 @@ public class GiftCertificateDto implements BaseDto {
         this.duration = duration;
         this.createDate = createDate;
         this.lastUpdateDate = lastUpdateDate;
+        this.isBought = isBought;
         tags = new ArrayList<>();
     }
 
-    public GiftCertificateDto(Long certificateId, String name, String description, BigDecimal price, int duration,
-                              LocalDateTime createDate, LocalDateTime lastUpdateDate, List<TagDto> tags) {
+    public GiftCertificateDto(long certificateId, String name, String description, BigDecimal price, int duration,
+                           LocalDateTime createDate, LocalDateTime lastUpdateDate,boolean isBought, List<TagDto> tags) {
         this.certificateId = certificateId;
         this.name = name;
         this.description = description;
@@ -66,6 +72,7 @@ public class GiftCertificateDto implements BaseDto {
         this.duration = duration;
         this.createDate = createDate;
         this.lastUpdateDate = lastUpdateDate;
+        this.isBought = isBought;
         this.tags = tags;
     }
 
@@ -211,6 +218,14 @@ public class GiftCertificateDto implements BaseDto {
      */
     public void setTags(List<TagDto> tags) {
         this.tags = tags;
+    }
+
+    public boolean isBought() {
+        return isBought;
+    }
+
+    public void setBought(boolean bought) {
+        isBought = bought;
     }
 
     @Override

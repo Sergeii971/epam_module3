@@ -40,5 +40,8 @@ public interface GiftCertificateService {
      * @param giftCertificateQueryParametersDto the gift certificate query parameter dto
      * @return the list of found gift certificate
      */
-    List<GiftCertificateDto> findGiftCertificatesByParameters(GiftCertificateQueryParametersDto giftCertificateQueryParametersDto);
+    List<GiftCertificateDto> findGiftCertificatesByParameters(GiftCertificateQueryParametersDto giftCertificateQueryParametersDto,
+                                                              int pageNumber, int size);
+
+    List<GiftCertificateDto> findByTags(List<String> tagNames);
 }

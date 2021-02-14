@@ -44,8 +44,8 @@ class TagServiceImplTest {
         tags.add(new Tag(tagId, name));
         List<TagDto> expected = new ArrayList<>();
         expected.add(new TagDto(tagId, name));
-        Mockito.when(dao.findAll()).thenReturn(tags);
-        assertEquals(tagService.findAll(), expected);
+        Mockito.when(dao.findAll(1, 3)).thenReturn(tags);
+        assertEquals(tagService.findAll(1, 3), expected);
     }
 
     @Test
@@ -56,8 +56,8 @@ class TagServiceImplTest {
         tags.add(new Tag(tagId, name));
         List<TagDto> expected = new ArrayList<>();
         expected.add(new TagDto(tagId, "qqqq"));
-        Mockito.when(dao.findAll()).thenReturn(tags);
-        assertNotEquals(tagService.findAll(), expected);
+        Mockito.when(dao.findAll(1, 3)).thenReturn(tags);
+        assertNotEquals(tagService.findAll(1, 3), expected);
     }
 
     @Test
@@ -84,29 +84,5 @@ class TagServiceImplTest {
     public void findTagByIdExceptionTest() {
         Mockito.doReturn(Optional.empty()).when(dao).findById(1);
         assertThrows(ResourceNotFoundException.class, () -> tagService.findTagById(1));
-    }
-
-    @Test
-    public void findTagsByGiftCertificateIdPositiveTest() {
-        long certificateId = 1;
-        String name = "qqq";
-        List<Tag> tags = new ArrayList<>();
-        tags.add(new Tag(certificateId, name));
-        List<TagDto> expected = new ArrayList<>();
-        expected.add(new TagDto(certificateId, name));
-        Mockito.when(dao.findByGiftCertificateId(certificateId)).thenReturn(tags);
-        assertEquals(tagService.findTagsByGiftCertificateId(certificateId), expected);
-    }
-
-    @Test
-    public void findTagsByGiftCertificateIdNegativeTest() {
-        long certificateId = 1;
-        String name = "qqq";
-        List<Tag> tags = new ArrayList<>();
-        tags.add(new Tag(certificateId, name));
-        List<TagDto> expected = new ArrayList<>();
-        expected.add(new TagDto(certificateId, "qqqq"));
-        Mockito.when(dao.findByGiftCertificateId(certificateId)).thenReturn(tags);
-        assertNotEquals(tagService.findTagsByGiftCertificateId(certificateId), expected);
     }
 }
