@@ -2,6 +2,7 @@ package com.epam.esm.service;
 
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.IncorrectParameterValueException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,12 +20,15 @@ public interface TagService {
      */
     TagDto add(TagDto tagDto);
 
+    @Transactional
+    void remove(long tagId);
+
     /**
      * Find all tags.
      *
      * @return the list of found tags
      */
-    List<TagDto> findAll(int pageNumber, int size);
+    List<TagDto> findAll(Integer pageNumber, Integer size);
 
     /**
      * Find tag by id.

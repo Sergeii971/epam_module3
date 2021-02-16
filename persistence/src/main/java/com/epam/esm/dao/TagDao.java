@@ -19,6 +19,8 @@ public interface TagDao {
      */
     Tag add(Tag tag);
 
+    void remove(Tag tag);
+
     /**
      * Find all tags.
      *
@@ -32,4 +34,6 @@ public interface TagDao {
      * @return the found tag
      */
     Optional<Tag> findById(long tagId);
+
+    Optional<Tag> findByName(String name);
 }

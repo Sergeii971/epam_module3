@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import javax.ws.rs.QueryParam;
 import java.util.List;
 
@@ -56,6 +55,19 @@ public class GiftCertificateController {
     }
 
     /**
+     * Remove gift certificate
+     *
+     * @param id the certificate id
+     */
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeGiftCertificate(@PathVariable(value = "id") long id) {
+        service.remove(id);
+    }
+
+    /**
      * Find gift certificate by id.
      *
      * @return GiftCertificateDto
@@ -73,11 +85,13 @@ public class GiftCertificateController {
      *
      * @param giftCertificateDto the gift certificate dto
      */
-    @RequestMapping(method = RequestMethod.PUT,
+    @RequestMapping(value = "/{id}", method = RequestMethod.PATCH,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public GiftCertificateDto updateGiftCertificate(@RequestBody GiftCertificateDto giftCertificateDto) {
+    public GiftCertificateDto updateGiftCertificate(@PathVariable(value = "id") long id,
+            @RequestBody GiftCertificateDto giftCertificateDto) {
+        giftCertificateDto.setCertificateId(id);
         return service.updateGiftCertificate(giftCertificateDto);
     }
 
@@ -95,17 +109,13 @@ public class GiftCertificateController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public CollectionModel<GiftCertificateDto> findGiftCertificatesByParameters(@RequestParam("pageNumber") int pageNumber,
-                                                                     @RequestParam("size") int size,
-                                                                     @RequestParam(value = "tagName", required = false)
-                                                                                 String tagName,
-                                                                     @RequestParam(value = "name", required = false) String name,
-                                                                     @RequestParam(value = "description",
-                                                                             required = false) String description,
-                                                                     @RequestParam(value = "sortType", required = false)
-                                                                                 String sortType,
-                                                                     @RequestParam(value = "orderType", required = false)
-                                                                                 String orderType) {
+    public List<GiftCertificateDto> findGiftCertificatesByParameters(@QueryParam("pageNumber") Integer pageNumber,
+                                                                                @QueryParam("size") Integer size,
+                                                                                @QueryParam(value = "tagName") String tagName,
+                                                                                @QueryParam(value = "name") String name,
+                                                                                @QueryParam(value = "description") String description,
+                                                                                @QueryParam(value = "sortType") String sortType,
+                                                                                @QueryParam(value = "orderType") String orderType) {
         ToOrderTypeConverter toOrderTypeConverter = applicationContext.getBean(ToOrderTypeConverter.class);
         GiftCertificateQueryParametersDto.OrderType orderType1 = toOrderTypeConverter.convertToOrderType(orderType);
         ToSortTypeConverter toSortTypeConverter = applicationContext.getBean(ToSortTypeConverter.class);

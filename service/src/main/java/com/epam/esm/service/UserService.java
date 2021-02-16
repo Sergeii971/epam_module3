@@ -10,5 +10,5 @@ public interface UserService {
 
     UserDto findUserByLogin(String login);
 
-    List<UserDto> findAll(int pageNumber, int size);
+    List<UserDto> findAll(Integer pageNumber, Integer size);
 }

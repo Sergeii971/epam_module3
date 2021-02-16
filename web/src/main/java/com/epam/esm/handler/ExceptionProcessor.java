@@ -5,6 +5,7 @@ import com.epam.esm.exception.IncorrectParameterValueException;
 import com.epam.esm.exception.OrderException;
 import com.epam.esm.exception.PaginationException;
 import com.epam.esm.exception.ResourceNotFoundException;
+import com.epam.esm.exception.TagException;
 import com.epam.esm.exception.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -58,6 +59,13 @@ public class ExceptionProcessor extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = OrderException.class)
     public ResponseEntity<ErrorDto> handleOrderException(OrderException exception,
                                                                      Locale locale) {
+        String exceptionMessage = exceptionMessageCreator.createMessage(exception.getMessage(), locale);
+        return new ResponseEntity<>(new ErrorDto(exceptionMessage, INCORRECT_PARAMETER_VALUE_CODE), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = TagException.class)
+    public ResponseEntity<ErrorDto> handleTagException(TagException exception,
+                                                         Locale locale) {
         String exceptionMessage = exceptionMessageCreator.createMessage(exception.getMessage(), locale);
         return new ResponseEntity<>(new ErrorDto(exceptionMessage, INCORRECT_PARAMETER_VALUE_CODE), HttpStatus.BAD_REQUEST);
     }

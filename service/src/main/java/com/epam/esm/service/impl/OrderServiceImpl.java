@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,8 @@ public class OrderServiceImpl implements OrderService {
     private final GiftCertificateDao giftCertificateDao;
     private final ModelMapper modelMapper = new ModelMapper();
     private final UserDao userDao;
+    private static final Integer DEFAULT_PAGE_NUMBER = 1;
+    private static final Integer DEFAULT_PAGE_SIZE = 10;
 
     @Autowired
     public OrderServiceImpl(OrderDao orderDao, GiftCertificateDao giftCertificateDao, UserDao userDao) {
@@ -52,17 +55,19 @@ public class OrderServiceImpl implements OrderService {
         if (!foundGiftCertificate.isPresent()) {
             throw new ResourceNotFoundException(ExceptionMessageKey.GIFT_CERTIFICATE_NOT_FOUND_BY_ID);
         }
-        if (foundGiftCertificate.get().isBought()) {
+        if (foundGiftCertificate.get().getIsBought()) {
             throw new OrderException(ExceptionMessageKey.CERTIFICATE_ALREADY_BOUGHT);
         }
         LocalDateTime orderDate = LocalDateTime.now();
-        foundGiftCertificate.get().setBought(true);
+        foundGiftCertificate.get().setIsBought(true);
         UserOrder order = new UserOrder(orderDate, foundUser.get(), foundGiftCertificate.get());
         orderDao.add(order);
     }
 
     @Override
-    public List<UserOrderDto> findAllUserOrders(String login, int pageNumber, int size) {
+    public List<UserOrderDto> findAllUserOrders(String login, Integer pageNumber, Integer size) {
+        pageNumber = Objects.isNull(pageNumber) ? DEFAULT_PAGE_NUMBER : pageNumber;
+        size = Objects.isNull(size) ? DEFAULT_PAGE_SIZE : size;
         if (pageNumber <= 0 || size <= 0) {
             throw new PaginationException(ExceptionMessageKey.INCORRECT_PAGINATION_DATA);
         }

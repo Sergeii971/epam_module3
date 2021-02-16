@@ -53,8 +53,8 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public CollectionModel<UserDto> findAllUsers(@RequestParam("pageNumber") int pageNumber,
-                                                 @RequestParam("size") int size) {
+    public List<UserDto> findAllUsers(@QueryParam("pageNumber") Integer pageNumber,
+                                                 @QueryParam("size") Integer size) {
         List<UserDto> users = userService.findAll(pageNumber, size);
         UserHateoas userHateoas = applicationContext.getBean(UserHateoas.class);
         return userHateoas.addLinksForFindAllUsers(users);

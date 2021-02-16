@@ -22,7 +22,7 @@ import java.util.Objects;
  * @author Verbovskiy Sergei
  * @version 1.0
  */
-public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> implements BaseDto {
+public class GiftCertificateDto implements BaseDto {
     @JsonProperty("certificateId")
     private long certificateId;
     @JsonProperty("name")
@@ -45,9 +45,12 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
     private boolean isBought;
     @JsonProperty("tags")
     private List<TagDto> tags;
+    @JsonProperty("links")
+    private  List<String> links;
 
     public GiftCertificateDto() {
         tags = new ArrayList<>();
+        links = new ArrayList<>();
     }
 
     public GiftCertificateDto(long certificateId, String name, String description, BigDecimal price, int duration,
@@ -220,12 +223,20 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
         this.tags = tags;
     }
 
-    public boolean isBought() {
+    public boolean getIsBought() {
         return isBought;
     }
 
-    public void setBought(boolean bought) {
+    public void setIsBought(boolean bought) {
         isBought = bought;
+    }
+
+    public List<String> getLinks() {
+        return links;
+    }
+
+    public void setLinks(List<String> links) {
+        this.links = links;
     }
 
     @Override

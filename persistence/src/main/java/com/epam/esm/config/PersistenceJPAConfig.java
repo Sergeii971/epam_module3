@@ -30,10 +30,11 @@ import java.util.ResourceBundle;
 public class PersistenceJPAConfig {
     @Value("${spring.profiles.active}")
     private String activeProfile;
+    private static final String DATABASE_FILE_NAME = "config.database";
 
     @Bean
     public DataSource dataSource() {
-        ResourceBundle rb = ResourceBundle.getBundle("config.database", new Locale(activeProfile));
+        ResourceBundle rb = ResourceBundle.getBundle(DATABASE_FILE_NAME, new Locale(activeProfile));
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(rb.getString("database.driverClassName"));
         dataSource.setUrl(rb.getString("database.url"));

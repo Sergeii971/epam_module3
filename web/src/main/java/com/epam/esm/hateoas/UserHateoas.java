@@ -22,20 +22,16 @@ public class UserHateoas {
         this.applicationContext = applicationContext;
     }
 
-
-    public CollectionModel<UserDto> addLinksForFindAllUsers(List<UserDto> users) {
+    public List<UserDto> addLinksForFindAllUsers(List<UserDto> users) {
         for (UserDto user : users) {
-            Link selfLink = WebMvcLinkBuilder.linkTo(UserController.class).slash(user.getLogin()).withSelfRel();
-            user.add(selfLink);
             OrderService orderService = applicationContext.getBean(OrderService.class);
 
             if (orderService.findAllUserOrders(user.getLogin(), 1, 1).size() > 0) {
-                Link link = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OrderController.class)
-                        .findAllUserOrders(user.getLogin(), 1, 10)).withRel("allOrders");
-                user.add(link);
+                String link = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OrderController.class)
+                        .findAllUserOrders(user.getLogin(), 1, 10)).toString();
+                user.getLinks().add(link);
             }
         }
-        Link link = WebMvcLinkBuilder.linkTo(UserController.class).withSelfRel();
-        return new CollectionModel<>(users, link);
+        return users;
     }
 }

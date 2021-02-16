@@ -7,7 +7,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,12 +27,14 @@ public class Tag implements BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long tagId;
     @Column(name = "name")
+    @NotNull(message = "javax.validation.constraints.NotNull.message.tagName")
     @Size(min = 1, max = 45, message = "javax.validation.constraints.NotNull.message.tagName")
     private String name;
     @ManyToMany(mappedBy = "tags")
     private List<GiftCertificate> giftCertificates;
 
     public Tag() {
+        giftCertificates = new ArrayList<>();
     }
 
     public Tag(long tagId, String name) {

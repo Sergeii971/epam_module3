@@ -1,18 +1,18 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.GiftCertificateDao;
+import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.GiftCertificateQueryParametersDto;
-import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.GiftCertificateQueryParameters;
+import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.ExceptionMessageKey;
 import com.epam.esm.exception.IncorrectParameterValueException;
 import com.epam.esm.exception.OrderException;
 import com.epam.esm.exception.PaginationException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.service.TagService;
 import com.epam.esm.validator.DataValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -35,24 +37,26 @@ import java.util.stream.Collectors;
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final GiftCertificateDao giftCertificateDao;
-    private final TagService tagService;
+    private final TagDao tagDao;
     private final ModelMapper modelMapper = new ModelMapper();
     private static final String EMPTY_VALUE = "";
+    private static final Integer DEFAULT_PAGE_NUMBER = 1;
+    private static final Integer DEFAULT_PAGE_SIZE = 10;
 
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, TagService tagService) {
+    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, TagDao tagDao) {
         this.giftCertificateDao = giftCertificateDao;
-        this.tagService = tagService;
+        this.tagDao = tagDao;
     }
 
     @Override
     @Transactional
     public void add(GiftCertificateDto giftCertificateDto) {
-        addAndSetTags(giftCertificateDto);
         GiftCertificate giftCertificate = modelMapper.map(giftCertificateDto, GiftCertificate.class);
         DataValidator<GiftCertificate> validator = new DataValidator<>();
         Optional<List<String>> errorMessage = validator.isDataCorrect(giftCertificate);
 
+        addAndSetTags(giftCertificate);
         if (errorMessage.isPresent()) {
             throw new IncorrectParameterValueException(errorMessage.get());
         }
@@ -64,6 +68,20 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     @Transactional
+    public void remove(long certificateId) {
+        Optional<GiftCertificate> giftCertificate = giftCertificateDao.findById(certificateId);
+
+        if (!giftCertificate.isPresent()) {
+            throw new ResourceNotFoundException(ExceptionMessageKey.GIFT_CERTIFICATE_NOT_FOUND_BY_ID);
+        }
+        if (giftCertificate.get().getIsBought()) {
+            throw new OrderException(ExceptionMessageKey.CERTIFICATE_ALREADY_BOUGHT);
+        }
+        giftCertificateDao.remove(giftCertificate.get());
+    }
+
+    @Override
+    @Transactional
     public GiftCertificateDto updateGiftCertificate(GiftCertificateDto modifiedGiftCertificateDto) {
         GiftCertificate modifiedGiftCertificate = modelMapper.map(modifiedGiftCertificateDto, GiftCertificate.class);
         Optional<GiftCertificate> foundGiftCertificate = giftCertificateDao.findById(modifiedGiftCertificateDto
@@ -71,12 +89,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (!foundGiftCertificate.isPresent()) {
             throw new ResourceNotFoundException(ExceptionMessageKey.GIFT_CERTIFICATE_NOT_FOUND_BY_ID);
         }
-        if (foundGiftCertificate.get().isBought()) {
+        if (foundGiftCertificate.get().getIsBought()) {
             throw new OrderException(ExceptionMessageKey.CERTIFICATE_ALREADY_BOUGHT);
         }
         updateGiftCertificateFields(foundGiftCertificate.get(), modifiedGiftCertificate);
         DataValidator<GiftCertificate> validator = new DataValidator<>();
-        Optional<List<String>> errorMessage = validator.isDataCorrect(modifiedGiftCertificate);
+        Optional<List<String>> errorMessage = validator.isDataCorrect(foundGiftCertificate.get());
 
         if (errorMessage.isPresent()) {
             throw new IncorrectParameterValueException(errorMessage.get());
@@ -95,7 +113,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public List<GiftCertificateDto> findGiftCertificatesByParameters(
-            GiftCertificateQueryParametersDto giftCertificateQueryParametersDto, int pageNumber, int size) {
+            GiftCertificateQueryParametersDto giftCertificateQueryParametersDto, Integer pageNumber, Integer size) {
+        pageNumber = Objects.isNull(pageNumber) ? DEFAULT_PAGE_NUMBER : pageNumber;
+        size = Objects.isNull(size) ? DEFAULT_PAGE_SIZE : size;
         if (pageNumber <= 0 || size <= 0) {
             throw new PaginationException(ExceptionMessageKey.INCORRECT_PAGINATION_DATA);
         }
@@ -111,7 +131,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
         return foundGiftCertificates
                 .stream()
-                .map(this::convertGiftCertificateAndSetTags)
+                .map(giftCertificate -> modelMapper.map(giftCertificate, GiftCertificateDto.class))
                 .collect(Collectors.toList());
     }
 
@@ -123,25 +143,22 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
         return giftCertificates.get()
                 .stream()
-                .map(this::convertGiftCertificateAndSetTags)
+                .map(giftCertificate -> modelMapper.map(giftCertificate, GiftCertificateDto.class))
                 .collect(Collectors.toList());
     }
 
-    private GiftCertificateDto convertGiftCertificateAndSetTags(GiftCertificate giftCertificate) {
-        GiftCertificateDto giftCertificateDto = modelMapper.map(giftCertificate, GiftCertificateDto.class);
-        return giftCertificateDto;
-    }
+    private void addAndSetTags(GiftCertificate giftCertificate) {
+        List<Tag> tags = new ArrayList<>();
 
-
-    private void addAndSetTags(GiftCertificateDto giftCertificateDto) {
-        List<TagDto> tags = new ArrayList<>();
-        if (Objects.nonNull(giftCertificateDto.getTags())) {
-            for (TagDto tagDto : giftCertificateDto.getTags()) {
-                TagDto add = tagService.add(tagDto);
-                tags.add(add);
+        if (Objects.nonNull(giftCertificate.getTags())) {
+            Set<Tag> tagSet = new HashSet<>(giftCertificate.getTags());
+            for (Tag tag : tagSet) {
+                Optional<Tag> foundTag = tagDao.findByName(tag.getName());
+                Tag addedTag = foundTag.orElseGet(() -> tagDao.add(tag));
+                tags.add(addedTag);
             }
         }
-        giftCertificateDto.setTags(tags);
+        giftCertificate.setTags(tags);
     }
 
     private boolean isQueryFindByTagName(GiftCertificateQueryParameters parameters) {
@@ -181,6 +198,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
         if (Objects.nonNull(modifiedGiftCertificate.getPrice())) {
             foundGiftCertificate.setPrice(modifiedGiftCertificate.getPrice());
+        }
+        if (Objects.nonNull(modifiedGiftCertificate.getTags())) {
+            addAndSetTags(modifiedGiftCertificate);
+            foundGiftCertificate.setTags(modifiedGiftCertificate.getTags());
         }
         foundGiftCertificate.setLastUpdateDate(LocalDateTime.now());
     }

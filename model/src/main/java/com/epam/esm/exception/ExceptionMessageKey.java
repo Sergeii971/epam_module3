@@ -9,6 +9,8 @@ public class ExceptionMessageKey {
     public static final String INCORRECT_PAGINATION_DATA = "pagination_exception";
     public static final String ORDER_NOT_FOUND_BY_ID = "order.notFoundById";
     public static final String GIFT_CERTIFICATE_NOT_FOUND = "giftCertificate.notFound";
+    public static final String TAG_NAME_ALREADY_EXIST = "tag.nameAlreadyExist";
+    public static final String Tag_USE_BY_PURCHASED_CERTIFICATE = "order.tagIsUseByPurchasedCertificate";
 
     private ExceptionMessageKey() {
     }

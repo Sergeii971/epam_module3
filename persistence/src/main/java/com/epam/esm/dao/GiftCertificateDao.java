@@ -20,6 +20,8 @@ public interface GiftCertificateDao {
      */
     GiftCertificate add(GiftCertificate giftCertificate);
 
+    void remove(GiftCertificate giftCertificate);
+
     /**
      * Find gift certificate by id.
      *
@@ -48,6 +50,8 @@ public interface GiftCertificateDao {
      * @return the list of found gift certificate
      */
     List<GiftCertificate> findByTagName(GiftCertificateQueryParameters parameters);
+
+    Optional<List<GiftCertificate>> findByTagName(String tagName);
 
     Optional<List<GiftCertificate>> findByTags(List<String> tagNames);
 }

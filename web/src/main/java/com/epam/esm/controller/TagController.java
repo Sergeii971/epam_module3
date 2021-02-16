@@ -46,6 +46,19 @@ public class TagController {
     }
 
     /**
+     * Remove tag
+     *
+     * @param id the tag id
+     */
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeTag(@PathVariable(value = "id") long id) {
+        tagService.remove(id);
+    }
+
+    /**
      * Find all tags.
      *
      * @return the list of found tags
@@ -54,8 +67,8 @@ public class TagController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public List<TagDto> findAllTags(@RequestParam("pageNumber") int pageNumber,
-                                    @RequestParam("size") int size) {
+    public List<TagDto> findAllTags(@QueryParam("pageNumber") Integer pageNumber,
+                                    @QueryParam("size") Integer size) {
         return tagService.findAll(pageNumber, size);
     }
 

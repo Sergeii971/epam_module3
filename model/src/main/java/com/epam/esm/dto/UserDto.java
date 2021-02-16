@@ -1,11 +1,12 @@
 package com.epam.esm.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.hateoas.RepresentationModel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class UserDto extends RepresentationModel<UserDto> implements BaseDto {
+public class UserDto implements BaseDto {
     @JsonProperty("login")
     private String login;
     @JsonProperty("name")
@@ -14,8 +15,10 @@ public class UserDto extends RepresentationModel<UserDto> implements BaseDto {
     private String surname;
     @JsonProperty("isAdmin")
     private boolean isAdmin;
+    private List<String> links;
 
     public UserDto() {
+        links = new ArrayList<>();
     }
 
     public UserDto(String login, String name, String surname, boolean isAdmin) {
@@ -49,12 +52,20 @@ public class UserDto extends RepresentationModel<UserDto> implements BaseDto {
         this.surname = surname;
     }
 
-    public boolean isAdmin() {
+    public boolean getIsAdmin() {
         return isAdmin;
     }
 
-    public void setAdmin(boolean admin) {
+    public void setIsAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public List<String> getLinks() {
+        return links;
+    }
+
+    public void setLinks(List<String> links) {
+        this.links = links;
     }
 
     @Override

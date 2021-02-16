@@ -51,8 +51,8 @@ public class OrderController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public List<UserOrderDto> findAllUserOrders(@PathVariable("login") String login,
-                                                @RequestParam("pageNumber") int pageNumber,
-                                                @RequestParam("size") int size) {
+                                                @QueryParam("pageNumber") Integer pageNumber,
+                                                @QueryParam("size") Integer size) {
         return orderService.findAllUserOrders(login, pageNumber, size);
     }
 

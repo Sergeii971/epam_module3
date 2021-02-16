@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final ModelMapper modelMapper = new ModelMapper();
+    private static final Integer DEFAULT_PAGE_NUMBER = 1;
+    private static final Integer DEFAULT_PAGE_SIZE = 10;
 
     @Autowired
     public UserServiceImpl(UserDao userDao) {
@@ -61,7 +63,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> findAll(int pageNumber, int size) {
+    public List<UserDto> findAll(Integer pageNumber, Integer size) {
+        pageNumber = Objects.isNull(pageNumber) ? DEFAULT_PAGE_NUMBER : pageNumber;
+        size = Objects.isNull(size) ? DEFAULT_PAGE_SIZE : size;
         if (pageNumber <= 0 || size <= 0) {
             throw new PaginationException(ExceptionMessageKey.INCORRECT_PAGINATION_DATA);
         }

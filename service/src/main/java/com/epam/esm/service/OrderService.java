@@ -9,7 +9,7 @@ import java.util.List;
 public interface OrderService {
     void add(String login, long certificateId);
 
-    List<UserOrderDto> findAllUserOrders(String login, int page, int size);
+    List<UserOrderDto> findAllUserOrders(String login, Integer pageNumber, Integer size);
 
     TagDto findMostPopularHighCostTag();
 

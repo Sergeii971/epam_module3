@@ -3,6 +3,7 @@ package com.epam.esm.service;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.GiftCertificateQueryParametersDto;
 import com.epam.esm.exception.IncorrectParameterValueException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +20,9 @@ public interface GiftCertificateService {
      * @param giftCertificateDto the gift certificate dto
      */
     void add(GiftCertificateDto giftCertificateDto);
+
+    @Transactional
+    void remove(long certificateId);
 
     /**
      * update gift certificate
@@ -41,7 +45,7 @@ public interface GiftCertificateService {
      * @return the list of found gift certificate
      */
     List<GiftCertificateDto> findGiftCertificatesByParameters(GiftCertificateQueryParametersDto giftCertificateQueryParametersDto,
-                                                              int pageNumber, int size);
+                                                              Integer pageNumber, Integer size);
 
     List<GiftCertificateDto> findByTags(List<String> tagNames);
 }
