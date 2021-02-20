@@ -13,6 +13,12 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import java.util.Locale;
 
+/**
+ * The type WebConfiguration.
+ *
+ * @author Verbovskiy Sergei
+ * @version 1.0
+ */
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
     private static final String ENCODING = "UTF-8";

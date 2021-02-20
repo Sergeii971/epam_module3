@@ -19,6 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.ws.rs.QueryParam;
 import java.util.List;
 
+/**
+ * The type UserController.
+ *
+ * @author Verbovskiy Sergei
+ * @version 1.0
+ */
 @RestController
 @RequestMapping("/v1/users")
 public class UserController {

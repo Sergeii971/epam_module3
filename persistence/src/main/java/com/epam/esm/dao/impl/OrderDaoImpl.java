@@ -15,6 +15,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * The type OrderDaoImpl.
+ *
+ * @author Verbovskiy Sergei
+ * @version 1.0
+ */
 @Repository
 public class OrderDaoImpl implements OrderDao {
     EntityManager entityManager;

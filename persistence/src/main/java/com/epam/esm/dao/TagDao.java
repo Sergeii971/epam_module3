@@ -35,5 +35,10 @@ public interface TagDao {
      */
     Optional<Tag> findById(long tagId);
 
+    /**
+     * Find tag by name.
+     *
+     * @return the found tag
+     */
     Optional<Tag> findByName(String name);
 }

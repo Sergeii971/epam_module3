@@ -12,6 +12,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * The type UserDaoImpl.
+ *
+ * @author Verbovskiy Sergei
+ * @version 1.0
+ */
 @Repository
 public class UserDaoImpl implements UserDao {
     EntityManager entityManager;
@@ -39,5 +45,10 @@ public class UserDaoImpl implements UserDao {
         query.setFirstResult((pageNumber - 1) * size);
         query.setMaxResults(size);
         return query.getResultList();
+    }
+
+    @Override
+    public User update(User user) {
+        return entityManager.merge(user);
     }
 }

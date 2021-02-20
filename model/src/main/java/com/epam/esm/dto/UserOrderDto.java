@@ -10,6 +10,12 @@ import org.springframework.hateoas.RepresentationModel;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * The type UserOrderDto.
+ *
+ * @author Verbovskiy Sergei
+ * @version 1.0
+ */
 public class UserOrderDto implements BaseDto {
     @JsonProperty("orderId")
     private long orderId;
@@ -32,34 +38,74 @@ public class UserOrderDto implements BaseDto {
         this.giftCertificate = giftCertificate;
     }
 
+    /**
+     * Gets id.
+     *
+     * @return the order id
+     */
     public long getOrderId() {
         return orderId;
     }
 
+    /**
+     * Sets order id.
+     *
+     * @param orderId the order id
+     */
     public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
+    /**
+     * Gets date.
+     *
+     * @return the date
+     */
     public LocalDateTime getDate() {
         return date;
     }
 
+    /**
+     * Sets date.
+     *
+     * @param date the date
+     */
     public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
+    /**
+     * Gets user.
+     *
+     * @return the user
+     */
     public UserDto getUser() {
         return user;
     }
 
+    /**
+     * Gets gift certificate.
+     *
+     * @return the gift certificate
+     */
     public GiftCertificateDto getGiftCertificate() {
         return giftCertificate;
     }
 
+    /**
+     * Sets user.
+     *
+     * @param user the user
+     */
     public void setUser(UserDto user) {
         this.user = user;
     }
 
+    /**
+     * Sets gift certificate.
+     *
+     * @param giftCertificate the gift certificate
+     */
     public void setGiftCertificate(GiftCertificateDto giftCertificate) {
         this.giftCertificate = giftCertificate;
     }

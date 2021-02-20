@@ -46,6 +46,4 @@ public interface GiftCertificateService {
      */
     List<GiftCertificateDto> findGiftCertificatesByParameters(GiftCertificateQueryParametersDto giftCertificateQueryParametersDto,
                                                               Integer pageNumber, Integer size);
-
-    List<GiftCertificateDto> findByTags(List<String> tagNames);
 }

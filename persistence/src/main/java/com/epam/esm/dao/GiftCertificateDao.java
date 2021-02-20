@@ -49,9 +49,12 @@ public interface GiftCertificateDao {
      *
      * @return the list of found gift certificate
      */
-    List<GiftCertificate> findByTagName(GiftCertificateQueryParameters parameters);
-
     Optional<List<GiftCertificate>> findByTagName(String tagName);
 
+    /**
+     * Find gift certificates by tags.
+     *
+     * @return the list of found gift certificate
+     */
     Optional<List<GiftCertificate>> findByTags(List<String> tagNames);
 }

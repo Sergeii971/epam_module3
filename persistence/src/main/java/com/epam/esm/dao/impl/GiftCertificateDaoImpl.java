@@ -73,20 +73,6 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     @Override
-    public List<GiftCertificate> findByTagName(GiftCertificateQueryParameters parameters) {
-        String queryWithSort = new StringBuilder()
-                .append(DatabaseQuery.FIND_CERTIFICATE_BY_TAG_NAME)
-                .append(" ")
-                .append(parameters.getSortType().getSortType())
-                .append(" ")
-                .append(parameters.getOrderType().getOrderType())
-                .toString();
-        Query query = entityManager.createNativeQuery(queryWithSort, GiftCertificate.class);
-        return query.setParameter(1, parameters.getTagName())
-                .getResultList();
-    }
-
-    @Override
     public Optional<List<GiftCertificate>> findByTagName(String tagName) {
         Query query = entityManager.createNativeQuery(DatabaseQuery.FIND_CERTIFICATE_BY_TAG_NAME, GiftCertificate.class);
         return Optional.of(query.setParameter(1, tagName)

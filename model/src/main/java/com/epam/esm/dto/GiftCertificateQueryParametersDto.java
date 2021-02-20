@@ -2,6 +2,9 @@ package com.epam.esm.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The type BaseDto.
  *
@@ -9,8 +12,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @version 1.0
  */
 public class GiftCertificateQueryParametersDto implements BaseDto {
-    @JsonProperty("tagName")
-    private String tagName;
+    @JsonProperty("tagNames")
+    private List<String> tagNames;
     @JsonProperty("name")
     private String name;
     @JsonProperty("description")
@@ -43,11 +46,12 @@ public class GiftCertificateQueryParametersDto implements BaseDto {
     }
 
     public GiftCertificateQueryParametersDto() {
+        tagNames = new ArrayList<>();
     }
 
-    public GiftCertificateQueryParametersDto(String tagName, String name, String description, SortType sortType,
+    public GiftCertificateQueryParametersDto(List<String> tagNames, String name, String description, SortType sortType,
                                              OrderType orderType) {
-        this.tagName = tagName;
+        this.tagNames = tagNames;
         this.name = name;
         this.description = description;
         this.sortType = sortType;
@@ -59,17 +63,17 @@ public class GiftCertificateQueryParametersDto implements BaseDto {
      *
      * @return the tag name
      */
-    public String getTagName() {
-        return tagName;
+    public List<String> getTagNames() {
+        return tagNames;
     }
 
     /**
      * Sets tag name.
      *
-     * @param tagName the tag name
+     * @param tagNames the tag name
      */
-    public void setTagName(String tagName) {
-        this.tagName = tagName;
+    public void setTagNames(List<String> tagNames) {
+        this.tagNames = tagNames;
     }
 
     /**

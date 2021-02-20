@@ -17,6 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.ws.rs.QueryParam;
 import java.util.List;
 
+/**
+ * The type OrderController.
+ *
+ * @author Verbovskiy Sergei
+ * @version 1.0
+ */
 @RestController
 @RequestMapping("/v1/orders")
 public class OrderController {
@@ -56,7 +62,12 @@ public class OrderController {
         return orderService.findAllUserOrders(login, pageNumber, size);
     }
 
-    @RequestMapping(value = "/tags", method = RequestMethod.GET,
+    /**
+     * find the most popular and high cost tag
+     *
+     * @return tagDto the tag dto
+     */
+    @RequestMapping(value = "/tags/popular", method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
@@ -64,6 +75,12 @@ public class OrderController {
         return orderService.findMostPopularHighCostTag();
     }
 
+    /**
+     * find order price and date
+     *
+     * @param orderId the order id
+     * @return orderPrice dateDto the order price date dto
+     */
     @RequestMapping(value = "/{id}",method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)

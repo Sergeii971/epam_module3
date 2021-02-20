@@ -10,6 +10,7 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import com.epam.esm.entity.UserOrder;
+import com.epam.esm.exception.BalanceException;
 import com.epam.esm.exception.ExceptionMessageKey;
 import com.epam.esm.exception.OrderException;
 import com.epam.esm.exception.PaginationException;
@@ -58,6 +59,13 @@ public class OrderServiceImpl implements OrderService {
         if (foundGiftCertificate.get().getIsBought()) {
             throw new OrderException(ExceptionMessageKey.CERTIFICATE_ALREADY_BOUGHT);
         }
+        BigDecimal difference = foundUser.get().getBalance().subtract(foundGiftCertificate.get().getPrice());
+        if (difference.doubleValue() < 0) {
+            throw new BalanceException(ExceptionMessageKey.INSUFFICIENT_FUNDS_IN_ACCOUNT);
+        }
+        BigDecimal newBalance = foundUser.get().getBalance().subtract(foundGiftCertificate.get().getPrice());
+        foundUser.get().setBalance(newBalance);
+        userDao.update(foundUser.get());
         LocalDateTime orderDate = LocalDateTime.now();
         foundGiftCertificate.get().setIsBought(true);
         UserOrder order = new UserOrder(orderDate, foundUser.get(), foundGiftCertificate.get());

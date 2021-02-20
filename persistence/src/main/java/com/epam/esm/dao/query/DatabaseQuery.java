@@ -28,10 +28,11 @@ public class DatabaseQuery {
             "INNER JOIN tag ON gift_certificate_has_tag.tag_tagId = tagId WHERE isBought = true " +
             "GROUP BY tag.name HAVING COUNT(tag.name) >= (SELECT COUNT(tag.name) FROM gift_certificate INNER JOIN " +
             "gift_certificate_has_tag ON gift_certificate.certificateId = gift_certificate_has_tag.gift_certificate_certificateId " +
-            "INNER JOIN tag ON gift_certificate_has_tag.tag_tagId = tagId GROUP BY tag.name ORDER BY COUNT(*) DESC LIMIT 1) " +
+            "INNER JOIN tag ON gift_certificate_has_tag.tag_tagId = tagId WHERE isBought = true GROUP BY tag.name ORDER BY COUNT(*) DESC LIMIT 1) " +
             "AND SUM(gift_certificate.price) >= (SELECT SUM(gift_certificate.price) FROM gift_certificate INNER JOIN " +
             "gift_certificate_has_tag ON gift_certificate.certificateId = gift_certificate_has_tag.gift_certificate_certificateId " +
-            "INNER JOIN tag ON gift_certificate_has_tag.tag_tagId = tagId GROUP BY tag.name ORDER BY SUM(gift_certificate.price) DESC LIMIT 1) LIMIT 1";
+            "INNER JOIN tag ON gift_certificate_has_tag.tag_tagId = tagId WHERE isBought = true  GROUP BY tag.name" +
+            " ORDER BY SUM(gift_certificate.price) DESC LIMIT 1) LIMIT 1";
     public static final String FIND_TAG_BY_NAME = "SELECT t FROM Tag t WHERE t.name = :name";
 
     public static final String FIND_ALL_USERS = "SELECT t FROM User t";

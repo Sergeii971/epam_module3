@@ -1,5 +1,11 @@
 package com.epam.esm.exception;
 
+/**
+ * The type OrderException.
+ *
+ * @author Verbovskiy Sergei
+ * @version 1.0
+ */
 public class OrderException extends RuntimeException {
     public OrderException() {
         super();

@@ -8,7 +8,6 @@ import com.epam.esm.hateoas.GiftCertificateHateoas;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -98,7 +97,7 @@ public class GiftCertificateController {
     /**
      * Find all gift certificate by search parameters.
      *
-     * @param tagName the tag name
+     * @param tagNames the tag name
      * @param description the description
      * @param name the gift certificate name
      * @param sortType the sort type
@@ -111,7 +110,8 @@ public class GiftCertificateController {
     @ResponseStatus(HttpStatus.OK)
     public List<GiftCertificateDto> findGiftCertificatesByParameters(@QueryParam("pageNumber") Integer pageNumber,
                                                                                 @QueryParam("size") Integer size,
-                                                                                @QueryParam(value = "tagName") String tagName,
+                                                                                @RequestParam(value = "tagNames", required = false)
+                                                                                 List<String> tagNames,
                                                                                 @QueryParam(value = "name") String name,
                                                                                 @QueryParam(value = "description") String description,
                                                                                 @QueryParam(value = "sortType") String sortType,
@@ -121,17 +121,9 @@ public class GiftCertificateController {
         ToSortTypeConverter toSortTypeConverter = applicationContext.getBean(ToSortTypeConverter.class);
         GiftCertificateQueryParametersDto.SortType sortType1 = toSortTypeConverter.convertToSortType(sortType);
         GiftCertificateQueryParametersDto giftCertificateQueryParametersDto = new GiftCertificateQueryParametersDto(
-                tagName, name, description, sortType1, orderType1);
+                tagNames, name, description, sortType1, orderType1);
         List<GiftCertificateDto> certificates = service.findGiftCertificatesByParameters(giftCertificateQueryParametersDto, pageNumber, size);
         GiftCertificateHateoas giftCertificateHateoas = applicationContext.getBean(GiftCertificateHateoas.class);
         return giftCertificateHateoas.addLinksForUpdateGiftCertificate(certificates);
-    }
-
-    @RequestMapping(value = "/tags", method = RequestMethod.GET,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public List<GiftCertificateDto> findByTags(@RequestParam(value = "tagNames") List<String> tagNames) {
-        return service.findByTags(tagNames);
     }
 }

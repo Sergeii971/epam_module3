@@ -1,6 +1,7 @@
 package com.epam.esm.handler;
 
 import com.epam.esm.dto.ErrorDto;
+import com.epam.esm.exception.BalanceException;
 import com.epam.esm.exception.IncorrectParameterValueException;
 import com.epam.esm.exception.OrderException;
 import com.epam.esm.exception.PaginationException;
@@ -30,6 +31,7 @@ import java.util.Locale;
 public class ExceptionProcessor extends ResponseEntityExceptionHandler {
     private static final int INCORRECT_PARAMETER_VALUE_CODE = 40;
     private static final int RESOURCE_NOT_FOUND_CODE = 44;
+    private static final int PAYMENT_REQUIRED = 42;
     private static final String EXCEPTION_400 = "exception_400";
     private final ExceptionMessageCreator exceptionMessageCreator;
 
@@ -37,6 +39,7 @@ public class ExceptionProcessor extends ResponseEntityExceptionHandler {
     public ExceptionProcessor(ExceptionMessageCreator exceptionMessageCreator) {
         this.exceptionMessageCreator = exceptionMessageCreator;
     }
+
     /**
      * handle Incorrect Parameter Value Exception.
      *
@@ -49,6 +52,11 @@ public class ExceptionProcessor extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorDto(exceptionMessage, INCORRECT_PARAMETER_VALUE_CODE), HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * handle user Exception.
+     *
+     * @return ErrorDto
+     */
     @ExceptionHandler(value = UserException.class)
     public ResponseEntity<ErrorDto> handleUserException(UserException exception,
                                                                      Locale locale) {
@@ -56,6 +64,11 @@ public class ExceptionProcessor extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorDto(exceptionMessage, INCORRECT_PARAMETER_VALUE_CODE), HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * handle order Exception.
+     *
+     * @return ErrorDto
+     */
     @ExceptionHandler(value = OrderException.class)
     public ResponseEntity<ErrorDto> handleOrderException(OrderException exception,
                                                                      Locale locale) {
@@ -63,6 +76,23 @@ public class ExceptionProcessor extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorDto(exceptionMessage, INCORRECT_PARAMETER_VALUE_CODE), HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * handle balance Exception.
+     *
+     * @return ErrorDto
+     */
+    @ExceptionHandler(value = BalanceException.class)
+    public ResponseEntity<ErrorDto> handleBalanceException(BalanceException exception,
+                                                         Locale locale) {
+        String exceptionMessage = exceptionMessageCreator.createMessage(exception.getMessage(), locale);
+        return new ResponseEntity<>(new ErrorDto(exceptionMessage, PAYMENT_REQUIRED), HttpStatus.PAYMENT_REQUIRED);
+    }
+
+    /**
+     * handle tag Exception.
+     *
+     * @return ErrorDto
+     */
     @ExceptionHandler(value = TagException.class)
     public ResponseEntity<ErrorDto> handleTagException(TagException exception,
                                                          Locale locale) {
@@ -70,6 +100,11 @@ public class ExceptionProcessor extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorDto(exceptionMessage, INCORRECT_PARAMETER_VALUE_CODE), HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * handle pagination Exception.
+     *
+     * @return ErrorDto
+     */
     @ExceptionHandler(value = PaginationException.class)
     public ResponseEntity<ErrorDto> handlePaginationException(PaginationException exception,
                                                               Locale locale) {
@@ -96,6 +131,11 @@ public class ExceptionProcessor extends ResponseEntityExceptionHandler {
                 new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * handle validation Exception.
+     *
+     * @return ErrorDto
+     */
     @ExceptionHandler(value = ValidationException.class)
     public ResponseEntity<ErrorDto> handleRException(ValidationException exception,  Locale locale) {
         String exceptionMessage = exceptionMessageCreator.createMessage(EXCEPTION_400, locale);

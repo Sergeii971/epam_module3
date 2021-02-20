@@ -26,7 +26,7 @@ class DataValidatorTest {
         List<Tag> tags = new ArrayList<>();
         GiftCertificate giftCertificate = new GiftCertificate(certificateId, name, description, price, duration, createDate,
                 lastUpdateDate, true, tags);
-        DataValidator validator = new DataValidator();
+        DataValidator<GiftCertificate> validator = new DataValidator<>();
         Optional<List<String>> actual = validator.isDataCorrect(giftCertificate);
         Optional<List<String>> expected = Optional.empty();
         assertEquals(actual, expected);
@@ -44,7 +44,7 @@ class DataValidatorTest {
         List<Tag> tags = new ArrayList<>();
         GiftCertificate giftCertificate = new GiftCertificate(certificateId, name, description, price, duration, createDate,
                 lastUpdateDate, true, tags);
-        DataValidator validator = new DataValidator();
+        DataValidator<GiftCertificate> validator = new DataValidator<>();
         Optional<List<String>> actual = validator.isDataCorrect(giftCertificate);
         Optional<List<String>> expected = Optional.empty();
         assertNotEquals(actual, expected);

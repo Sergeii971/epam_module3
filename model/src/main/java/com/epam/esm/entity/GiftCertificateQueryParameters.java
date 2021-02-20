@@ -1,5 +1,7 @@
 package com.epam.esm.entity;
 
+import java.util.List;
+
 /**
  * The type GiftCertificateQueryParameters.
  *
@@ -7,7 +9,7 @@ package com.epam.esm.entity;
  * @version 1.0
  */
 public class GiftCertificateQueryParameters {
-    private String tagName;
+    private List<String> tagNames;
     private String name;
     private String description;
     private SortType sortType;
@@ -55,9 +57,9 @@ public class GiftCertificateQueryParameters {
     public GiftCertificateQueryParameters() {
     }
 
-    public GiftCertificateQueryParameters(String tagName, String name, String description, SortType sortType,
+    public GiftCertificateQueryParameters(List<String> tagNames, String name, String description, SortType sortType,
                                           OrderType orderType) {
-        this.tagName = tagName;
+        this.tagNames = tagNames;
         this.name = name;
         this.description = description;
         this.sortType = sortType;
@@ -69,17 +71,17 @@ public class GiftCertificateQueryParameters {
      *
      * @return the tag name
      */
-    public String getTagName() {
-        return tagName;
+    public List<String> getTagNames() {
+        return tagNames;
     }
 
     /**
      * Sets tag name.
      *
-     * @param tagName the tag name
+     * @param tagNames the tag name
      */
-    public void setTagName(String tagName) {
-        this.tagName = tagName;
+    public void setTagNames(List<String> tagNames) {
+        this.tagNames = tagNames;
     }
 
     /**

@@ -1,5 +1,11 @@
 package com.epam.esm.exception;
 
+/**
+ * The type PaginationException.
+ *
+ * @author Verbovskiy Sergei
+ * @version 1.0
+ */
 public class PaginationException extends RuntimeException {
     public PaginationException() {
         super();

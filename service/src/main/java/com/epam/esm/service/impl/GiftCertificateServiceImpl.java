@@ -121,27 +121,17 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
         GiftCertificateQueryParameters giftCertificateQueryParameters = modelMapper
                 .map(giftCertificateQueryParametersDto, GiftCertificateQueryParameters.class);
-        List<GiftCertificate> foundGiftCertificates;
-        if (isQueryFindByTagName(giftCertificateQueryParameters)) {
+        Optional<List<GiftCertificate>> foundGiftCertificates;
+        if (isQueryFindByTagNames(giftCertificateQueryParameters)) {
             prepareParametersForRequest(giftCertificateQueryParameters);
-            foundGiftCertificates = giftCertificateDao.findByTagName(giftCertificateQueryParameters);
+            foundGiftCertificates = giftCertificateDao.findByTags(giftCertificateQueryParameters.getTagNames());
         } else {
             prepareParametersForRequest(giftCertificateQueryParameters);
-            foundGiftCertificates = giftCertificateDao.findByQueryParameters(giftCertificateQueryParameters, pageNumber,size);
+            foundGiftCertificates = Optional.of(giftCertificateDao.findByQueryParameters(giftCertificateQueryParameters,
+                    pageNumber,size));
         }
         return foundGiftCertificates
-                .stream()
-                .map(giftCertificate -> modelMapper.map(giftCertificate, GiftCertificateDto.class))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<GiftCertificateDto> findByTags(List<String> tagNames) {
-        Optional<List<GiftCertificate>> giftCertificates = giftCertificateDao.findByTags(tagNames);
-        if (!giftCertificates.isPresent()) {
-            throw new ResourceNotFoundException(ExceptionMessageKey.GIFT_CERTIFICATE_NOT_FOUND);
-        }
-        return giftCertificates.get()
+                .get()
                 .stream()
                 .map(giftCertificate -> modelMapper.map(giftCertificate, GiftCertificateDto.class))
                 .collect(Collectors.toList());
@@ -152,6 +142,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         if (Objects.nonNull(giftCertificate.getTags())) {
             Set<Tag> tagSet = new HashSet<>(giftCertificate.getTags());
+
             for (Tag tag : tagSet) {
                 Optional<Tag> foundTag = tagDao.findByName(tag.getName());
                 Tag addedTag = foundTag.orElseGet(() -> tagDao.add(tag));
@@ -161,14 +152,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         giftCertificate.setTags(tags);
     }
 
-    private boolean isQueryFindByTagName(GiftCertificateQueryParameters parameters) {
-        return (Objects.nonNull(parameters.getTagName()) && Objects.isNull(parameters.getName())
-                && Objects.isNull(parameters.getDescription()));
+    private boolean isQueryFindByTagNames(GiftCertificateQueryParameters parameters) {
+        return (Objects.nonNull(parameters.getTagNames()) || parameters.getTagNames().isEmpty())
+                && Objects.isNull(parameters.getName())
+                && Objects.isNull(parameters.getDescription());
     }
 
     private void prepareParametersForRequest(GiftCertificateQueryParameters parameters) {
-        if (Objects.isNull(parameters.getTagName())) {
-            parameters.setTagName(EMPTY_VALUE);
+        if (Objects.isNull(parameters.getTagNames())) {
+            parameters.setTagNames(new ArrayList<>());
         }
         if (Objects.isNull(parameters.getName())) {
             parameters.setName(EMPTY_VALUE);

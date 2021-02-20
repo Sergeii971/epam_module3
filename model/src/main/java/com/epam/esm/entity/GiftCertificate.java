@@ -236,10 +236,20 @@ public class GiftCertificate implements BaseEntity {
         this.lastUpdateDate = lastUpdateDate;
     }
 
+    /**
+     * Gets isBought.
+     *
+     * @return the isBought
+     */
     public boolean getIsBought() {
         return isBought;
     }
 
+    /**
+     * Sets isBought.
+     *
+     * @param bought
+     */
     public void setIsBought(boolean bought) {
         isBought = bought;
     }

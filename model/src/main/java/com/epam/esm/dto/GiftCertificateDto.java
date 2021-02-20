@@ -2,18 +2,16 @@ package com.epam.esm.dto;
 
 import com.epam.esm.converter.LocalDateTimeSerializer;
 import com.epam.esm.converter.LocalDateTimeDeserializer;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.springframework.hateoas.RepresentationModel;
 
-import javax.persistence.Column;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -46,11 +44,11 @@ public class GiftCertificateDto implements BaseDto {
     @JsonProperty("tags")
     private List<TagDto> tags;
     @JsonProperty("links")
-    private  List<String> links;
+    private Map<String, String> links;
 
     public GiftCertificateDto() {
         tags = new ArrayList<>();
-        links = new ArrayList<>();
+        links = new HashMap<>();
     }
 
     public GiftCertificateDto(long certificateId, String name, String description, BigDecimal price, int duration,
@@ -223,19 +221,39 @@ public class GiftCertificateDto implements BaseDto {
         this.tags = tags;
     }
 
+    /**
+     * Gets isBought.
+     *
+     * @return the isBought
+     */
     public boolean getIsBought() {
         return isBought;
     }
 
+    /**
+     * Sets isBought.
+     *
+     * @param bought
+     */
     public void setIsBought(boolean bought) {
         isBought = bought;
     }
 
-    public List<String> getLinks() {
+    /**
+     * Gets links.
+     *
+     * @return the links
+     */
+    public Map<String, String> getLinks() {
         return links;
     }
 
-    public void setLinks(List<String> links) {
+    /**
+     * Sets links.
+     *
+     * @param links the links
+     */
+    public void setLinks(Map<String, String> links) {
         this.links = links;
     }
 

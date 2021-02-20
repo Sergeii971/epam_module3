@@ -1,5 +1,11 @@
 package com.epam.esm.exception;
 
+/**
+ * The type UserException.
+ *
+ * @author Verbovskiy Sergei
+ * @version 1.0
+ */
 public class UserException extends RuntimeException {
     public UserException() {
         super();
