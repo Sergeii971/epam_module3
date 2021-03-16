@@ -19,7 +19,7 @@ public interface GiftCertificateService {
      *
      * @param giftCertificateDto the gift certificate dto
      */
-    void add(GiftCertificateDto giftCertificateDto);
+    GiftCertificateDto add(GiftCertificateDto giftCertificateDto);
 
     @Transactional
     void remove(long certificateId);

@@ -1,11 +1,14 @@
 package com.epam.esm.dto;
 
+import com.epam.esm.entity.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * The type UserDto.
@@ -14,8 +17,12 @@ import java.util.Objects;
  * @version 1.0
  */
 public class UserDto implements BaseDto {
+    @JsonProperty("userId")
+    private long userId;
     @JsonProperty("login")
     private String login;
+    @JsonIgnore
+    private String password;
     @JsonProperty("name")
     private String name;
     @JsonProperty("surname")
@@ -25,6 +32,7 @@ public class UserDto implements BaseDto {
     @JsonProperty("isAdmin")
     private boolean isAdmin;
     private Map<String, String> links;
+    private Set<Role> roles;
 
     public UserDto() {
         links = new HashMap<>();
@@ -144,6 +152,30 @@ public class UserDto implements BaseDto {
      */
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override

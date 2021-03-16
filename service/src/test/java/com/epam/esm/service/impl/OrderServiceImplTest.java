@@ -23,7 +23,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -62,15 +61,15 @@ class OrderServiceImplTest {
         String userName = "q";
         String surname = "q";
         boolean isAdmin = false;
-        User user = new User(login, userName, surname, new BigDecimal(1), isAdmin);
+        User user = new User(1, login, userName, surname, new BigDecimal(1), isAdmin);
         UserDto userDto = new UserDto(login, userName, surname, new BigDecimal(1), isAdmin);
         UserOrder order = new UserOrder(1, createDate, user, giftCertificate);
         List<UserOrder> orders = new ArrayList<>();
         orders.add(order);
-        Mockito.when(dao.findAllUserOrders(login, 1, 1)).thenReturn(orders);
+        Mockito.when(dao.findAllUserOrders(1, 1, 1)).thenReturn(orders);
         List<UserOrderDto> expected = new ArrayList<>();
         expected.add(new UserOrderDto(1, createDate, userDto, giftCertificateDto));
-        assertEquals(orderService.findAllUserOrders(login, 1, 1), expected);
+        assertEquals(orderService.findAllUserOrders(1, 1, 1), expected);
     }
 
     @Test
@@ -92,15 +91,15 @@ class OrderServiceImplTest {
         String userName = "q";
         String surname = "q";
         boolean isAdmin = false;
-        User user = new User(login, userName, surname, new BigDecimal(1), isAdmin);
+        User user = new User(1, login, userName, surname, new BigDecimal(1), isAdmin);
         UserDto userDto = new UserDto(login, userName, surname, new BigDecimal(1), isAdmin);
         UserOrder order = new UserOrder(1, createDate, user, giftCertificate);
         List<UserOrder> orders = new ArrayList<>();
         orders.add(order);
-        Mockito.when(dao.findAllUserOrders(login, 1, 1)).thenReturn(orders);
+        Mockito.when(dao.findAllUserOrders(1, 1, 1)).thenReturn(orders);
         List<UserOrderDto> expected = new ArrayList<>();
         expected.add(new UserOrderDto(2, createDate, userDto, giftCertificateDto));
-        assertNotEquals(orderService.findAllUserOrders(login, 1, 1), expected);
+        assertNotEquals(orderService.findAllUserOrders(1, 1, 1), expected);
     }
 
     @Test
@@ -108,9 +107,11 @@ class OrderServiceImplTest {
         long tagId = 1;
         String name = "qqq";
         Tag tag = new Tag(tagId, name);
+        List<Tag> tags = new ArrayList<>();
+        tags.add(tag);
         TagDto expected = new TagDto(tagId, name);
-        Mockito.when(dao.findMostPopularHighCostTag()).thenReturn(tag);
-        assertEquals(orderService.findMostPopularHighCostTag(), expected);
+        Mockito.when(dao.findMostPopularHighCostTag(1)).thenReturn(tags);
+        assertEquals(orderService.findMostPopularHighCostTag(1), expected);
     }
 
     @Test
@@ -118,8 +119,10 @@ class OrderServiceImplTest {
         long tagId = 1;
         String name = "qqq";
         Tag tag = new Tag(tagId, name);
+        List<Tag> tags = new ArrayList<>();
+        tags.add(tag);
         TagDto expected = new TagDto(2, name);
-        Mockito.when(dao.findMostPopularHighCostTag()).thenReturn(tag);
-        assertNotEquals(orderService.findMostPopularHighCostTag(), expected);
+        Mockito.when(dao.findMostPopularHighCostTag(1)).thenReturn(tags);
+        assertNotEquals(orderService.findMostPopularHighCostTag(1), expected);
     }
 }

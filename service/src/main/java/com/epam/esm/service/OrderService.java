@@ -16,24 +16,24 @@ public interface OrderService {
     /**
      * Add order
      *
-     * @param login the user login
+     * @param userId the user id
      * @param certificateId the certificate id
      */
-    void add(String login, long certificateId);
+    UserOrderDto add(long userId, long certificateId);
 
     /**
      * Find all user orders.
      *
      * @return the list of found orders
      */
-    List<UserOrderDto> findAllUserOrders(String login, Integer pageNumber, Integer size);
+    List<UserOrderDto> findAllUserOrders(long userId, Integer pageNumber, Integer size);
 
     /**
      * Find most popular tag.
      *
      * @return the tag
      */
-    TagDto findMostPopularHighCostTag();
+    List<TagDto> findMostPopularHighCostTag(long userId);
 
     /**
      * Find order price date

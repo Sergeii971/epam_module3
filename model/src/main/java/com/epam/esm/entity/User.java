@@ -1,20 +1,30 @@
 package com.epam.esm.entity;
 
-import javax.persistence.CascadeType;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.persistence.Transient;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * The type User.
@@ -24,12 +34,19 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "user")
-public class User implements BaseEntity {
+public class User implements BaseEntity, UserDetails {
     @Id
+    @Column(name = "userId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long userId;
     @Column(name = "login")
     @NotNull(message = "javax.validation.constraints.NotNull.message.login")
     @Size(min = 1, max = 45, message = "javax.validation.constraints.Size.message.login")
     private String login;
+    @Column(name = "password")
+    @NotNull(message = "javax.validation.constraints.NotNull.message.password")
+    @Size(min = 5, max = 128, message = "javax.validation.constraints.Size.message.password")
+    private String password;
     @Column(name = "name")
     @NotNull(message = "javax.validation.constraints.NotNull.message.name")
     @Size(min = 1, max = 45, message = "javax.validation.constraints.Size.message.name")
@@ -38,20 +55,26 @@ public class User implements BaseEntity {
     @NotNull(message = "javax.validation.constraints.NotNull.message.surname")
     @Size(min = 1, max = 45, message = "javax.validation.constraints.Size.message.surname")
     private String surname;
-    @NotNull(message = "javax.validation.constraints.NotNull.message.price")
-    @Min(value = 1, message = "javax.validation.constraints.Min.message.price")
-    @Max(value = 100000000, message = "javax.validation.constraints.Max.message.price")
+    @NotNull(message = "javax.validation.constraints.NotNull.message.balance")
+    @DecimalMin(value = "1", message = "javax.validation.constraints.Min.message.balance")
+    @DecimalMax(value = "100000000", message = "javax.validation.constraints.Max.message.balance")
+    @Digits(integer = 10, fraction = 4)
     @Column(name = "balance")
     private BigDecimal balance;
     @Column(name = "isAdmin")
     private boolean isAdmin;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     private List<UserOrder> orders = new ArrayList<>();
+    @Transient
+    private Set<Role> roles;
 
     public User() {
+        roles = new HashSet<>();
     }
 
-    public User(String login, String name, String surname, BigDecimal balance, boolean isAdmin) {
+    public User(long userId, String login, String name, String surname, BigDecimal balance, boolean isAdmin) {
+        roles = new HashSet<>();
+        this.userId = userId;
         this.login = login;
         this.name = name;
         this.surname = surname;
@@ -59,7 +82,9 @@ public class User implements BaseEntity {
         this.isAdmin = isAdmin;
     }
 
-    public User(String login, String name, String surname, BigDecimal balance, boolean isAdmin, List<UserOrder> orders) {
+    public User(long userId, String login, String name, String surname, BigDecimal balance, boolean isAdmin, List<UserOrder> orders) {
+        roles = new HashSet<>();
+        this.userId = userId;
         this.login = login;
         this.name = name;
         this.surname = surname;
@@ -127,7 +152,7 @@ public class User implements BaseEntity {
      *
      * @return isAdmin
      */
-    public boolean isAdmin() {
+    public boolean getIsAdmin() {
         return isAdmin;
     }
 
@@ -136,7 +161,7 @@ public class User implements BaseEntity {
      *
      * @param admin the is Admin
      */
-    public void setAdmin(boolean admin) {
+    public void setIsAdmin(boolean admin) {
         isAdmin = admin;
     }
 
@@ -156,6 +181,69 @@ public class User implements BaseEntity {
      */
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public List<UserOrder> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<UserOrder> orders) {
+        this.orders = orders;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
+
+    @Override
+    public String getUsername() {
+        return login;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     @Override
@@ -181,7 +269,7 @@ public class User implements BaseEntity {
         result += result * 31 + (surname == null ? 0 : surname.hashCode());
         result += result * 31 + (login == null ? 0 : login.hashCode());
         result += result * 31 + Boolean.hashCode(isAdmin);
-        result += result * 31 + balance.hashCode();
+        result += result * 31 + (balance == null ? 0 : balance.hashCode());
         return result;
     }
 

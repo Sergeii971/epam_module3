@@ -7,6 +7,7 @@ import com.epam.esm.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,15 +37,16 @@ public class OrderController {
     /**
      * Add order
      *
-     * @param login the user login
+     * @param id the user id
      * @param certificateId the certificate id
      */
-    @RequestMapping(value = "/users/{login}/certificates/{certificateId}", method = RequestMethod.POST,
+    @PreAuthorize("hasRole('USER')")
+    @RequestMapping(value = "/users/{userId}/certificates/{certificateId}", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void addOrder(@PathVariable(value = "login") String login, @PathVariable(value = "certificateId") long certificateId) {
-        orderService.add(login, certificateId);
+    public UserOrderDto addOrder(@PathVariable(value = "userId") long id, @PathVariable(value = "certificateId") long certificateId) {
+        return orderService.add(id, certificateId);
     }
 
     /**
@@ -52,27 +54,29 @@ public class OrderController {
      *
      * @return the list of found orders
      */
-    @RequestMapping(value = "/users/{login}", method = RequestMethod.GET,
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @RequestMapping(value = "/users/{userId}", method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public List<UserOrderDto> findAllUserOrders(@PathVariable("login") String login,
+    public List<UserOrderDto> findAllUserOrders(@PathVariable("userId") long id,
                                                 @QueryParam("pageNumber") Integer pageNumber,
                                                 @QueryParam("size") Integer size) {
-        return orderService.findAllUserOrders(login, pageNumber, size);
+        return orderService.findAllUserOrders(id, pageNumber, size);
     }
 
     /**
      * find the most popular and high cost tag
      *
-     * @return tagDto the tag dto
+     * @return the list of found tags
      */
-    @RequestMapping(value = "/tags/popular", method = RequestMethod.GET,
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @RequestMapping(value = "/users/{userId}/tags/popular", method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public TagDto findMostPopularHighCostTag() {
-        return orderService.findMostPopularHighCostTag();
+    public  List<TagDto> findMostUserPopularHighCostTag(@PathVariable(value = "userId") long id) {
+        return orderService.findMostPopularHighCostTag(id);
     }
 
     /**
@@ -81,6 +85,7 @@ public class OrderController {
      * @param orderId the order id
      * @return orderPrice dateDto the order price date dto
      */
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @RequestMapping(value = "/{id}",method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)

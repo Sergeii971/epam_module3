@@ -43,10 +43,10 @@ class UserServiceImplTest {
         String name = "q";
         String surname = "q";
         boolean isAdmin = false;
-        User user = new User(login, name, surname, new BigDecimal(1), isAdmin);
+        User user = new User(1, login, name, surname, new BigDecimal(1), isAdmin);
         UserDto expected = new UserDto(login, name, surname, new BigDecimal(1), isAdmin);
-        Mockito.when(dao.findByLogin(login)).thenReturn(Optional.of(user));
-        assertEquals(userService.findUserByLogin(login), expected);
+        Mockito.when(dao.findById(1)).thenReturn(Optional.of(user));
+        assertEquals(userService.findUserById(1), expected);
     }
 
     @Test
@@ -55,10 +55,10 @@ class UserServiceImplTest {
         String name = "q";
         String surname = "q";
         boolean isAdmin = false;
-        User user = new User(login, name, surname, new BigDecimal(1), isAdmin);
+        User user = new User(1, login, name, surname, new BigDecimal(1), isAdmin);
         UserDto expected = new UserDto(login, name, surname, new BigDecimal(1), true);
-        Mockito.when(dao.findByLogin(login)).thenReturn(Optional.of(user));
-        assertNotEquals(userService.findUserByLogin(login), expected);
+        Mockito.when(dao.findById(1)).thenReturn(Optional.of(user));
+        assertNotEquals(userService.findUserById(1), expected);
     }
 
     @Test
@@ -67,7 +67,7 @@ class UserServiceImplTest {
         String name = "q";
         String surname = "q";
         boolean isAdmin = false;
-        User user = new User(login, name, surname, new BigDecimal(1), isAdmin);
+        User user = new User(1, login, name, surname, new BigDecimal(1), isAdmin);
         List<User> users  = new ArrayList<>();
         users.add(user);
         List<UserDto> expected = new ArrayList<>();
@@ -82,7 +82,7 @@ class UserServiceImplTest {
         String name = "q";
         String surname = "q";
         boolean isAdmin = false;
-        User user = new User(login, name, surname, new BigDecimal(1), isAdmin);
+        User user = new User(1, login, name, surname, new BigDecimal(1), isAdmin);
         List<User> users  = new ArrayList<>();
         users.add(user);
         List<UserDto> expected = new ArrayList<>();

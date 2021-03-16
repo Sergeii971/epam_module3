@@ -12,6 +12,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -45,8 +48,9 @@ public class GiftCertificate implements BaseEntity {
     private String description;
     @Column(name = "price")
     @NotNull(message = "javax.validation.constraints.NotNull.message.price")
-    @Min(value = 1, message = "javax.validation.constraints.Min.message.price")
-    @Max(value = 100000, message = "javax.validation.constraints.Max.message.price")
+    @DecimalMin(value = "1.0", message = "javax.validation.constraints.Min.message.price")
+    @DecimalMax(value = "100000.0", message = "javax.validation.constraints.Max.message.price")
+    @Digits(integer = 6, fraction = 4)
     private BigDecimal price;
     @Column(name = "duration")
     @Min(value = 1, message = "javax.validation.constraints.Min.message.duration")
@@ -62,7 +66,7 @@ public class GiftCertificate implements BaseEntity {
     @JoinTable(name = "gift_certificate_has_tag", joinColumns = @JoinColumn(name = "gift_certificate_certificateId"),
             inverseJoinColumns = @JoinColumn(name = "tag_tagId"))
     private List<Tag> tags;
-    @OneToMany(mappedBy = "giftCertificate", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "giftCertificate")
     private List<UserOrder> orders = new ArrayList<>();
 
     public GiftCertificate(long certificateId, String name, String description, BigDecimal price, int duration,
@@ -308,7 +312,7 @@ public class GiftCertificate implements BaseEntity {
         result += result * 31 + (lastUpdateDate == null ? 0 : lastUpdateDate.hashCode());
         result += result * 31 + (tags == null ? 0 : tags.hashCode());
         result += result * 31 + duration;
-        result += result * 31 + price.hashCode();
+        result += result * 31 + (price == null ? 0 : price.hashCode());
         result += result * 31 + Boolean.hashCode(isBought);
         return result;
     }

@@ -20,6 +20,8 @@ import java.util.List;
 public class UserHateoas {
     private final ApplicationContext applicationContext;
     private static final String ALL_ORDERS = "all orders";
+    private static final Integer DEFAULT_PAGE_NUMBER = 1;
+    private static final Integer DEFAULT_PAGE_SIZE = 10;
 
     @Autowired
     public UserHateoas(ApplicationContext applicationContext) {
@@ -36,9 +38,9 @@ public class UserHateoas {
         for (UserDto user : users) {
             OrderService orderService = applicationContext.getBean(OrderService.class);
 
-            if (orderService.findAllUserOrders(user.getLogin(), 1, 1).size() > 0) {
+            if (orderService.findAllUserOrders(user.getUserId(), DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE).size() > 0) {
                 String link = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OrderController.class)
-                        .findAllUserOrders(user.getLogin(), 1, 10)).toString();
+                        .findAllUserOrders(user.getUserId(),DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE)).toString();
                 user.getLinks().put(ALL_ORDERS, link);
             }
         }

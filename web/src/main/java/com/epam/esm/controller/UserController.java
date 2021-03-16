@@ -5,9 +5,11 @@ import com.epam.esm.hateoas.UserHateoas;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.QueryParam;
 import java.util.List;
 
@@ -46,8 +49,8 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void addUser(@RequestBody UserDto userDto) {
-        userService.add(userDto);
+    public UserDto addUser(@RequestBody UserDto userDto) {
+        return userService.add(userDto);
     }
 
     /**
@@ -55,6 +58,7 @@ public class UserController {
      *
      * @return the list of found users
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -69,13 +73,14 @@ public class UserController {
     /**
      * find user by id
      *
-     * @param login the user id
+     * @param id the user id
      */
-    @RequestMapping(value = "/{login}", method = RequestMethod.GET,
+    @RequestMapping(value = "/{userId}", method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public UserDto findUserByLogin(@PathVariable(value = "login") String login) {
-        return userService.findUserByLogin(login);
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserDto findUserById(@PathVariable(value = "userId") long id) {
+        return userService.findUserById(id);
     }
 }

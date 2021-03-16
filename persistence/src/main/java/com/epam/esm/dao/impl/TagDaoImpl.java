@@ -21,7 +21,7 @@ import java.util.Optional;
  */
 @Repository
 public class TagDaoImpl implements TagDao {
-    EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Autowired
     public TagDaoImpl(EntityManager entityManager) {

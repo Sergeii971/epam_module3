@@ -1,13 +1,16 @@
 package com.epam.esm.dao.impl;
 
+import com.epam.esm.dao.ColumnName;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dao.query.DatabaseQuery;
+import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,7 +23,7 @@ import java.util.Optional;
  */
 @Repository
 public class UserDaoImpl implements UserDao {
-    EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Autowired
     public UserDaoImpl(EntityManager entityManager) {
@@ -34,14 +37,14 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Optional<User> findByLogin(String login) {
-        User user = entityManager.find(User.class, login);
+    public Optional<User> findById(long userId) {
+        User user = entityManager.find(User.class, userId);
         return Objects.isNull(user) ? Optional.empty() : Optional.of(user);
     }
 
     @Override
     public List<User> findAll(int pageNumber, int size) {
-        Query query = entityManager.createQuery(DatabaseQuery.FIND_ALL_USERS, User.class);
+        TypedQuery<User> query = entityManager.createQuery(DatabaseQuery.FIND_ALL_USERS, User.class);
         query.setFirstResult((pageNumber - 1) * size);
         query.setMaxResults(size);
         return query.getResultList();
@@ -50,5 +53,12 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User update(User user) {
         return entityManager.merge(user);
+    }
+
+    @Override
+    public Optional<User> findByLogin(String login) {
+        TypedQuery<User> query = entityManager.createQuery(DatabaseQuery.FIND_USER_BY_LOGIN, User.class);
+        List<User> users = query.setParameter(ColumnName.LOGIN, login).getResultList();
+        return Objects.isNull(users) || users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
     }
 }

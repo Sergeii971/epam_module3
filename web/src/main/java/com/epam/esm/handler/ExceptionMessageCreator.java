@@ -47,7 +47,7 @@ public class ExceptionMessageCreator {
             String errorMessage = messageSource.getMessage(exceptionMessageKey, new Object[]{}, locale);
             builder
                     .append(errorMessage)
-                    .append(" ");
+                    .append("; ");
         }
         return builder.toString();
     }

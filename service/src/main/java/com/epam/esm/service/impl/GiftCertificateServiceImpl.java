@@ -51,7 +51,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     @Transactional
-    public void add(GiftCertificateDto giftCertificateDto) {
+    public GiftCertificateDto add(GiftCertificateDto giftCertificateDto) {
         GiftCertificate giftCertificate = modelMapper.map(giftCertificateDto, GiftCertificate.class);
         DataValidator<GiftCertificate> validator = new DataValidator<>();
         Optional<List<String>> errorMessage = validator.isDataCorrect(giftCertificate);
@@ -64,6 +64,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         giftCertificate.setCreateDate(currentTime);
         giftCertificate.setLastUpdateDate(currentTime);
         giftCertificateDao.add(giftCertificate);
+        return modelMapper.map(giftCertificate, GiftCertificateDto.class);
     }
 
     @Override
@@ -115,7 +116,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public List<GiftCertificateDto> findGiftCertificatesByParameters(
             GiftCertificateQueryParametersDto giftCertificateQueryParametersDto, Integer pageNumber, Integer size) {
         pageNumber = Objects.isNull(pageNumber) ? DEFAULT_PAGE_NUMBER : pageNumber;
-        size = Objects.isNull(size) ? DEFAULT_PAGE_SIZE : size;
+        size = Objects.isNull(size) || size > DEFAULT_PAGE_SIZE ? DEFAULT_PAGE_SIZE : size;
         if (pageNumber <= 0 || size <= 0) {
             throw new PaginationException(ExceptionMessageKey.INCORRECT_PAGINATION_DATA);
         }
@@ -153,7 +154,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     private boolean isQueryFindByTagNames(GiftCertificateQueryParameters parameters) {
-        return (Objects.nonNull(parameters.getTagNames()) || parameters.getTagNames().isEmpty())
+        return (Objects.nonNull(parameters.getTagNames()) && !parameters.getTagNames().isEmpty())
                 && Objects.isNull(parameters.getName())
                 && Objects.isNull(parameters.getDescription());
     }

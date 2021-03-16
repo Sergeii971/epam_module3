@@ -46,40 +46,42 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void add(String login, long certificateId) {
-        Optional<User> foundUser = userDao.findByLogin(login);
+    public UserOrderDto add(long userId, long certificateId) {
+        Optional<User> foundUser = userDao.findById(userId);
 
         if (!foundUser.isPresent()) {
             throw new ResourceNotFoundException(ExceptionMessageKey.USER_NOT_FOUND_BY_ID);
         }
         Optional<GiftCertificate> foundGiftCertificate = giftCertificateDao.findById(certificateId);
+
         if (!foundGiftCertificate.isPresent()) {
             throw new ResourceNotFoundException(ExceptionMessageKey.GIFT_CERTIFICATE_NOT_FOUND_BY_ID);
         }
         if (foundGiftCertificate.get().getIsBought()) {
             throw new OrderException(ExceptionMessageKey.CERTIFICATE_ALREADY_BOUGHT);
         }
-        BigDecimal difference = foundUser.get().getBalance().subtract(foundGiftCertificate.get().getPrice());
-        if (difference.doubleValue() < 0) {
+        BigDecimal newBalance = foundUser.get().getBalance().subtract(foundGiftCertificate.get().getPrice());
+        if (newBalance.doubleValue() < 0) {
             throw new BalanceException(ExceptionMessageKey.INSUFFICIENT_FUNDS_IN_ACCOUNT);
         }
-        BigDecimal newBalance = foundUser.get().getBalance().subtract(foundGiftCertificate.get().getPrice());
         foundUser.get().setBalance(newBalance);
         userDao.update(foundUser.get());
         LocalDateTime orderDate = LocalDateTime.now();
         foundGiftCertificate.get().setIsBought(true);
+        giftCertificateDao.update(foundGiftCertificate.get());
         UserOrder order = new UserOrder(orderDate, foundUser.get(), foundGiftCertificate.get());
         orderDao.add(order);
+        return modelMapper.map(order, UserOrderDto.class);
     }
 
     @Override
-    public List<UserOrderDto> findAllUserOrders(String login, Integer pageNumber, Integer size) {
+    public List<UserOrderDto> findAllUserOrders(long userId, Integer pageNumber, Integer size) {
         pageNumber = Objects.isNull(pageNumber) ? DEFAULT_PAGE_NUMBER : pageNumber;
-        size = Objects.isNull(size) ? DEFAULT_PAGE_SIZE : size;
+        size = Objects.isNull(size) || size > DEFAULT_PAGE_SIZE ? DEFAULT_PAGE_SIZE : size;
         if (pageNumber <= 0 || size <= 0) {
             throw new PaginationException(ExceptionMessageKey.INCORRECT_PAGINATION_DATA);
         }
-        List<UserOrder> userOrders = orderDao.findAllUserOrders(login, pageNumber, size);
+        List<UserOrder> userOrders = orderDao.findAllUserOrders(userId, pageNumber, size);
         return userOrders
                 .stream()
                 .map(order -> modelMapper.map(order, UserOrderDto.class))
@@ -87,9 +89,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public TagDto findMostPopularHighCostTag() {
-        Tag tag = orderDao.findMostPopularHighCostTag();
-        return modelMapper.map(tag, TagDto.class);
+    public List<TagDto> findMostPopularHighCostTag(long userId) {
+        Optional<User> foundUser = userDao.findById(userId);
+
+        if (!foundUser.isPresent()) {
+            throw new ResourceNotFoundException(ExceptionMessageKey.USER_NOT_FOUND_BY_ID);
+        }
+        List<Tag> tags = orderDao.findMostPopularHighCostTag(userId);
+        return tags.stream()
+                .map(tag -> modelMapper.map(tag, TagDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override

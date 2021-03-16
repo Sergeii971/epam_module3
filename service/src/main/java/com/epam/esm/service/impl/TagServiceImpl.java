@@ -82,7 +82,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<TagDto> findAll( Integer pageNumber, Integer size) {
         pageNumber = Objects.isNull(pageNumber) ? DEFAULT_PAGE_NUMBER : pageNumber;
-        size = Objects.isNull(size) ? DEFAULT_PAGE_SIZE : size;
+        size = Objects.isNull(size) || size > DEFAULT_PAGE_SIZE ? DEFAULT_PAGE_SIZE : size;
         if (pageNumber <= 0 || size <= 0) {
             throw new PaginationException(ExceptionMessageKey.INCORRECT_PAGINATION_DATA);
         }

@@ -25,14 +25,14 @@ public interface OrderDao {
      *
      * @return the list of found orders
      */
-    List<UserOrder> findAllUserOrders(String login, int pageNumber, int size);
+    List<UserOrder> findAllUserOrders(long userId, int pageNumber, int size);
 
     /**
      * Find most popular tag.
      *
      * @return the tag
      */
-    Tag findMostPopularHighCostTag();
+    List<Tag> findMostPopularHighCostTag(long userId);
 
     /**
      * Find order by id.

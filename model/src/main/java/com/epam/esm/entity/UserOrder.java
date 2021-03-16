@@ -27,10 +27,10 @@ public class UserOrder implements BaseEntity {
     @Column(name = "date")
     private LocalDateTime date;
     @ManyToOne
-    @JoinColumn(name = "user_login", nullable=false)
+    @JoinColumn(name = "user_userId", nullable = false)
     private User user;
     @ManyToOne
-    @JoinColumn(name = "gift_certificate_certificateId", nullable=false)
+    @JoinColumn(name = "gift_certificate_certificateId", nullable = false)
     private GiftCertificate giftCertificate;
 
     public UserOrder() {

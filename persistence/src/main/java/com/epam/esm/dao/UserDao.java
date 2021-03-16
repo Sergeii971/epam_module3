@@ -24,7 +24,7 @@ public interface UserDao {
      *
      * @return the found user
      */
-    Optional<User> findByLogin(String login);
+    Optional<User> findById(long userId);
 
     /**
      * Find all users.
@@ -39,4 +39,6 @@ public interface UserDao {
      * @param user the user
      */
     User update(User user);
+
+    Optional<User> findByLogin(String login);
 }

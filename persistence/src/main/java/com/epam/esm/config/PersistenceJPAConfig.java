@@ -31,15 +31,19 @@ public class PersistenceJPAConfig {
     @Value("${spring.profiles.active}")
     private String activeProfile;
     private static final String DATABASE_FILE_NAME = "config.database";
+    private static final String DRIVER_CLASS_NAME = "database.driverClassName";
+    private static final String URL = "database.url";
+    private static final String USERNAME = "database.username";
+    private static final String PASSWORD = "database.password";
 
     @Bean
     public DataSource dataSource() {
         ResourceBundle rb = ResourceBundle.getBundle(DATABASE_FILE_NAME, new Locale(activeProfile));
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(rb.getString("database.driverClassName"));
-        dataSource.setUrl(rb.getString("database.url"));
-        dataSource.setUsername(rb.getString("database.username"));
-        dataSource.setPassword(rb.getString("database.password"));
+        dataSource.setDriverClassName(rb.getString(DRIVER_CLASS_NAME));
+        dataSource.setUrl(rb.getString(URL));
+        dataSource.setUsername(rb.getString(USERNAME));
+        dataSource.setPassword(rb.getString(PASSWORD));
         return dataSource;
     }
 
@@ -64,15 +68,16 @@ public class PersistenceJPAConfig {
     }
 
     @Bean
-    public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
+    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 
     Properties additionalProperties() {
         Properties properties = new Properties();
+
         properties.setProperty("hibernate.hbm2ddl.auto", "update");
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
-
+        properties.put("hibernate.jdbc.batch_size", "5");
         return properties;
     }
 }

@@ -21,7 +21,7 @@ import java.util.Optional;
  */
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
-    EntityManager entityManager;
+    private final EntityManager entityManager;
     private static final String SEARCH_AMONG_ALL_TAG_NAMES_QUERY = "INSTR(group_concat(tag.name SEPARATOR ' '), ?) ";
     private static final String AND_SEPARATOR = " AND ";
     private static final String OR_SEPARATOR = " OR ";
